@@ -56,10 +56,10 @@ public class Medicament {
     private List<MouvementStock> mouvements = new ArrayList<>();
 
     @OneToMany(mappedBy = "medicament", cascade = CascadeType.ALL)
-    private List<LigneVente> Ligneventes = new ArrayList<>();
+    private List<VenteItems> ligneventes = new ArrayList<>();
 
     @OneToMany(mappedBy = "medicament", cascade = CascadeType.ALL)
-    private List<LigneCommande> ligneCommnde = new ArrayList<>();
+    private List<CommandeItems> ligneCommnde = new ArrayList<>();
 
 
 }
