@@ -42,7 +42,12 @@ public class User {
     private boolean actif = true;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime dateCreation = LocalDateTime.now();
+    private LocalDateTime dateCreation;
+
+    @PrePersist
+    public void prePersist() {
+        this.dateCreation = LocalDateTime.now();
+    }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Vente> ventes = new ArrayList<>();
