@@ -33,8 +33,14 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints publics
-                        .requestMatchers("/api/auth/**").permitAll()
+
+                        .requestMatchers(
+                                "/login/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+
+                        .requestMatchers("/api/auth/register").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )
