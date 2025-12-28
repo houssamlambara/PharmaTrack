@@ -1,5 +1,6 @@
 package com.houssam.pharmaTrack.security.controller;
 
+import com.houssam.pharmaTrack.response.ApiResponse;
 import com.houssam.pharmaTrack.security.dto.AuthRequest;
 import com.houssam.pharmaTrack.security.dto.AuthResponse;
 import com.houssam.pharmaTrack.security.dto.RegisterRequest;
@@ -26,8 +27,10 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request) {
+        AuthResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(authService.register(request));
+                .body(new ApiResponse<>("Inscription réussie", response)
+        );
     }
 }

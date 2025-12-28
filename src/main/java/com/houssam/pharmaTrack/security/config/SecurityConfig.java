@@ -36,7 +36,6 @@ public class SecurityConfig {
                         // Endpoints publics
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // Tous les autres endpoints nécessitent une authentification
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
