@@ -48,7 +48,6 @@ public class AuthService {
             throw new RuntimeException("Un utilisateur avec cet email existe déjà");
         }
 
-        // Créer le nouvel utilisateur
         User user = User.builder()
                 .nom(request.getNom())
                 .prenom(request.getPrenom())
@@ -60,7 +59,6 @@ public class AuthService {
 
         user = userRepository.save(user);
 
-        // Générer le token
         String token = jwtService.generateToken(user);
 
         return AuthResponse.builder()

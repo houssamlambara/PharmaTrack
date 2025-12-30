@@ -34,21 +34,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
-        // Vérifier si le header Authorization existe et commence par "Bearer "
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Extraire le token JWT
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
 
-        // Si l'email existe et qu'il n'y a pas d'authentification dans le context
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-            // Valider le token
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
