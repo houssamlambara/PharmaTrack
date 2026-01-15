@@ -5,8 +5,10 @@ import com.houssam.pharmaTrack.repository.UserRepository;
 import com.houssam.pharmaTrack.security.dto.AuthRequest;
 import com.houssam.pharmaTrack.security.dto.AuthResponse;
 import com.houssam.pharmaTrack.security.dto.RegisterRequest;
+import com.houssam.pharmaTrack.security.exception.AuthenticationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,15 +24,23 @@ public class AuthService {
 
 
     public AuthResponse login(AuthRequest authRequest) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authRequest.getEmail(),
-                        authRequest.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authRequest.getEmail(),
+                            authRequest.getPassword()
+                    )
+            );
+        } catch (BadCredentialsException e) {
+            throw new AuthenticationException("Email ou mot de passe incorrect");
+        }
 
         User user = userRepository.findByEmail(authRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'email: " + authRequest.getEmail()));
+                .orElseThrow(() -> new AuthenticationException("Utilisateur non trouvé avec l'email: " + authRequest.getEmail()));
+
+        if (!user.isActif()) {
+            throw new AuthenticationException("Compte désactivé. Veuillez contacter l'administrateur.");
+        }
 
         String token = jwtService.generateToken(user);
 

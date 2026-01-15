@@ -32,7 +32,7 @@ public class MouvementStock {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "medicamenr_id", nullable = false)
+    @JoinColumn(name = "medicament_id", nullable = false)
     private Medicament medicament;
 
     @ManyToOne(fetch = FetchType.LAZY)

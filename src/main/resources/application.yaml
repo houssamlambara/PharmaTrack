@@ -18,8 +18,8 @@ spring:
         format_sql: true
     open-in-view: false
 
-  jwt:
-    secret: "e58e12v521ezbt8t54z6z0fv98e5r65erf4t6y7u8i9o0p1q2w3e4r5t6y7u8i9o0p"
-    expiration: 86400000L
-    refresh-expiration: 604800000
+jwt:
+  secret: "e58e12v521ezbt8t54z6z0fv98e5r65erf4t6y7u8i9o0p1q2w3e4r5t6y7u8i9o0p"
+  expiration: 86400000
+  refresh-expiration: 604800000
 
