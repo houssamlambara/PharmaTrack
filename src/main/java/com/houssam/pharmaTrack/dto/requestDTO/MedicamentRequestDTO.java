@@ -17,6 +17,9 @@ public class MedicamentRequestDTO {
     @Size(min = 2, max = 100, message = "Le nom doit contenir entre 2 et 100 caractères")
     private String nom;
 
+    @Size(max = 50, message = "Le code-barres ne peut pas dépasser 50 caractères")
+    private String codeBarres;
+
     @Size(max = 500, message = "La description ne peut pas dépasser 500 caractères")
     private String description;
 
@@ -31,6 +34,9 @@ public class MedicamentRequestDTO {
     @NotNull(message = "Le prix unitaire est obligatoire")
     @DecimalMin(value = "0.01", message = "Le prix doit être supérieur à 0")
     private BigDecimal prixUnitaire;
+
+    // @Size(max = 255, message = "L'URL de l'image ne peut pas dépasser 255 caractères")
+    // private String imageUrl;
 
     @NotNull(message = "La catégorie est obligatoire")
     private String categorieId;

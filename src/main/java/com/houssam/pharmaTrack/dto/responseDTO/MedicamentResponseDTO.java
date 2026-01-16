@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class MedicamentResponseDTO {
     private String id;
     private String nom;
+    private String codeBarres;
     private String description;
     private String dosage;
     private String forme;
@@ -23,6 +24,8 @@ public class MedicamentResponseDTO {
     private Integer quantiteStock;
     private Integer seuilAlerte;
     private LocalDate dateExpiration;
+    // private String imageUrl;
+    private boolean actif;
     private LocalDateTime dateCreation;
 
     // Informations de la catégorie
