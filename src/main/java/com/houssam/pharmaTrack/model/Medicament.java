@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,8 @@ public class Medicament {
     @Column(unique = true, length = 50)
     private String codeBarres;
 
-    @Column(nullable = false, length = 50)
-    private double prixUnitaire;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal prixUnitaire;
 
     @Column(nullable = false)
     private Integer quantiteStock = 0;
@@ -38,14 +39,20 @@ public class Medicament {
     @Column(nullable = false)
     private LocalDate dateExpiration;
 
-    @Column(length = 255)
-    private String imageUrl;
+    // @Column(length = 255)
+    // private String imageUrl;
 
     @Column(nullable = false)
     private Integer seuilAlerte;
 
     @Column(length = 500)
     private String description;
+
+    @Column(length = 50)
+    private String dosage;
+
+    @Column(length = 50)
+    private String forme;
 
     @Column(nullable = false)
     private boolean actif = true;
