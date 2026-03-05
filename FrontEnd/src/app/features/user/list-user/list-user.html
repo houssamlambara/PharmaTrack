@@ -1,0 +1,298 @@
+<header class="flex flex-col gap-4 px-6 pt-6 pb-2 md:px-10 md:pt-10 shrink-0">
+  <div class="flex flex-wrap items-center gap-2 text-sm">
+    <a class="text-slate-500 hover:text-emerald-500 transition-colors" href="#">Settings</a>
+    <span class="text-slate-400 material-symbols-outlined text-base">chevron_right</span>
+    <span class="text-slate-900 font-semibold">Employee Management</span>
+  </div>
+  <div class="flex flex-wrap justify-between items-end gap-4">
+    <div class="flex flex-col gap-1">
+      <h2 class="text-slate-900 text-3xl md:text-4xl font-extrabold tracking-tight">Team &amp; Access</h2>
+      <p class="text-slate-500 text-base font-normal max-w-2xl">Manage staff roles, permissions, and payroll details for
+        your pharmacy.</p>
+    </div>
+    <button
+      class="flex items-center justify-center gap-2 h-11 px-5 rounded-full bg-white border border-slate-200 text-slate-700 text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
+      <span class="material-symbols-outlined text-lg text-slate-400">download</span>
+      Export List
+    </button>
+  </div>
+</header>
+<div class="flex-1 overflow-y-auto px-6 py-6 md:px-10 pb-20">
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="flex flex-col gap-1 rounded-2xl p-5 bg-white border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="p-2 rounded-full bg-emerald-500/10 text-emerald-500"><span
+            class="material-symbols-outlined fill text-xl">groups</span></div>
+        <p class="text-slate-500 text-sm font-medium">Total Employees</p>
+      </div>
+      <p class="text-slate-900 text-3xl font-bold">24</p>
+      <p class="text-emerald-500 text-sm font-semibold flex items-center gap-1"><span
+          class="material-symbols-outlined fill text-sm">trending_up</span> +10% this month</p>
+    </div>
+    <div class="flex flex-col gap-1 rounded-2xl p-5 bg-white border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="p-2 rounded-full bg-emerald-500/10 text-emerald-500"><span
+            class="material-symbols-outlined fill text-xl">medical_services</span></div>
+        <p class="text-slate-500 text-sm font-medium">Pharmacists</p>
+      </div>
+      <p class="text-slate-900 text-3xl font-bold">8</p>
+      <p class="text-slate-500 text-sm font-medium">Fully Licensed</p>
+    </div>
+    <div class="flex flex-col gap-1 rounded-2xl p-5 bg-white border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="p-2 rounded-full bg-emerald-500/10 text-emerald-500"><span
+            class="material-symbols-outlined fill text-xl">support_agent</span></div>
+        <p class="text-slate-500 text-sm font-medium">Support Staff</p>
+      </div>
+      <p class="text-slate-900 text-3xl font-bold">12</p>
+      <p class="text-emerald-500 text-sm font-semibold flex items-center gap-1"><span
+          class="material-symbols-outlined fill text-sm">trending_up</span> +2 new</p>
+    </div>
+    <div class="flex flex-col gap-1 rounded-2xl p-5 bg-white border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="p-2 rounded-full bg-emerald-500/10 text-emerald-500"><span
+            class="material-symbols-outlined fill text-xl">attach_money</span></div>
+        <p class="text-slate-500 text-sm font-medium">Payroll Est.</p>
+      </div>
+      <p class="text-slate-900 text-3xl font-bold">$142k</p>
+      <p class="text-slate-500 text-sm font-medium">Monthly</p>
+    </div>
+  </section>
+  <div class="flex flex-col xl:flex-row gap-8">
+    <div class="flex-1 flex flex-col gap-6 min-w-0">
+      <div
+        class="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="relative flex-1 w-full">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">search</span>
+          <input
+            class="w-full pl-11 pr-4 py-3 rounded-xl border-none bg-slate-50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500/50 text-sm font-medium"
+            placeholder="Search by name, role or ID..." type="text" />
+        </div>
+        <div class="flex gap-2 w-full sm:w-auto px-2">
+          <button
+            class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-600 text-slate-700 text-sm font-bold transition-colors">
+            <span class="material-symbols-outlined text-lg">filter_list</span> Filter
+          </button>
+        </div>
+      </div>
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">Employee</th>
+                <th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">Role</th>
+                <th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">Contact</th>
+                <th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+                <th class="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr class="group hover:bg-slate-50 transition-colors">
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center font-bold text-emerald-700">
+                      JS</div>
+                    <div>
+                      <p class="text-sm font-bold text-slate-900">John Smith</p>
+                      <p class="text-xs text-slate-500">ID: #PT-001</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-4 px-6">
+                  <span
+                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">Senior
+                    Pharmacist</span>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="flex flex-col">
+                    <p class="text-sm text-slate-700">john.s@pharmatrack.com</p>
+                    <p class="text-xs text-slate-500">+1 (555) 123-4567</p>
+                  </div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-2">
+                    <div class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span class="text-sm font-medium text-slate-700">Active</span>
+                  </div>
+                </td>
+                <td class="py-4 px-6 text-right">
+                  <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      class="p-2 rounded-full hover:bg-emerald-50 hover:text-emerald-600 text-slate-400 transition-colors"><span
+                        class="material-symbols-outlined text-lg">edit</span></button>
+                    <button
+                      class="p-2 rounded-full hover:bg-red-50 hover:text-red-600 text-slate-400 transition-colors"><span
+                        class="material-symbols-outlined text-lg">delete</span></button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="group hover:bg-slate-50 transition-colors">
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-700">
+                      ED</div>
+                    <div>
+                      <p class="text-sm font-bold text-slate-900">Emily Davis</p>
+                      <p class="text-xs text-slate-500">ID: #PT-008</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-4 px-6">
+                  <span
+                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">Pharmacy
+                    Tech</span>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="flex flex-col">
+                    <p class="text-sm text-slate-700">emily.d@pharmatrack.com</p>
+                    <p class="text-xs text-slate-500">+1 (555) 987-6543</p>
+                  </div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-2">
+                    <div class="h-2 w-2 rounded-full bg-emerald-500"></div>
+                    <span class="text-sm font-medium text-slate-700">Active</span>
+                  </div>
+                </td>
+                <td class="py-4 px-6 text-right">
+                  <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      class="p-2 rounded-full hover:bg-emerald-50 hover:text-emerald-600 text-slate-400 transition-colors"><span
+                        class="material-symbols-outlined text-lg">edit</span></button>
+                    <button
+                      class="p-2 rounded-full hover:bg-red-50 hover:text-red-600 text-slate-400 transition-colors"><span
+                        class="material-symbols-outlined text-lg">delete</span></button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="group hover:bg-slate-50 transition-colors">
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="h-10 w-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600">
+                      MB</div>
+                    <div>
+                      <p class="text-sm font-bold text-slate-900">Michael Brown</p>
+                      <p class="text-xs text-slate-500">ID: #PT-012</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-4 px-6">
+                  <span
+                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">Inventory
+                    Mgr</span>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="flex flex-col">
+                    <p class="text-sm text-slate-700">m.brown@pharmatrack.com</p>
+                    <p class="text-xs text-slate-500">+1 (555) 234-5678</p>
+                  </div>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-2">
+                    <div class="h-2 w-2 rounded-full bg-slate-300"></div>
+                    <span class="text-sm font-medium text-slate-500">On Leave</span>
+                  </div>
+                </td>
+                <td class="py-4 px-6 text-right">
+                  <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      class="p-2 rounded-full hover:bg-emerald-50 hover:text-emerald-600 text-slate-400 transition-colors"><span
+                        class="material-symbols-outlined text-lg">edit</span></button>
+                    <button
+                      class="p-2 rounded-full hover:bg-red-50 hover:text-red-600 text-slate-400 transition-colors"><span
+                        class="material-symbols-outlined text-lg">delete</span></button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="flex items-center justify-between px-6 py-4 border-t border-slate-200">
+          <p class="text-sm text-slate-500">Showing 1 to 3 of 24 entries</p>
+          <div class="flex gap-2">
+            <button
+              class="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 text-slate-400 hover:bg-slate-50 transition-colors">
+              <span class="material-symbols-outlined text-sm">chevron_left</span>
+            </button>
+            <button
+              class="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 text-white font-bold text-sm shadow-md">1</button>
+            <button
+              class="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50 transition-colors text-sm">2</button>
+            <button
+              class="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 text-slate-400 hover:bg-slate-50 transition-colors">
+              <span class="material-symbols-outlined text-sm">chevron_right</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="w-full xl:w-96 shrink-0">
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 lg:sticky lg:top-4">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-slate-900">Add Employee</h3>
+        </div>
+        <form class="flex flex-col gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold uppercase text-slate-500 ml-3">Full Name</label>
+            <div class="relative">
+              <span
+                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">person</span>
+              <input
+                class="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all outline-none"
+                placeholder="e.g. Jane Doe" type="text" />
+            </div>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold uppercase text-slate-500 ml-3">Role</label>
+            <div class="relative">
+              <span
+                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">badge</span>
+              <select
+                class="w-full pl-11 pr-10 py-3.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 appearance-none transition-all outline-none">
+                <option>Pharmacist</option>
+                <option>Pharmacy Technician</option>
+                <option>Inventory Manager</option>
+                <option>Cashier / Sales</option>
+                <option>Admin</option>
+              </select>
+              <span
+                class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 pointer-events-none">expand_more</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold uppercase text-slate-500 ml-3">Email Address</label>
+            <div class="relative">
+              <span
+                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">mail</span>
+              <input
+                class="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all outline-none"
+                placeholder="email@pharmatrack.com" type="email" />
+            </div>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold uppercase text-slate-500 ml-3">Mot de passe</label>
+            <div class="relative">
+              <span
+                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">lock</span>
+              <input
+                class="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all outline-none"
+                placeholder="Enter password" type="password" />
+            </div>
+          </div>
+          <div class="flex gap-3 mt-2">
+            <button
+              class="flex-1 py-3.5 rounded-full border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors"
+              type="button">Cancel</button>
+            <button
+              class="flex-1 py-3.5 rounded-full bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all"
+              type="button">Save Profile</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

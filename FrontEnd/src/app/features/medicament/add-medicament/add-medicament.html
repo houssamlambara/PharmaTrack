@@ -1,0 +1,110 @@
+
+    <div class="flex-1 max-w-[1200px] w-full mx-auto p-4 md:p-8 lg:p-12">
+      <nav class="flex items-center text-sm font-medium mb-6">
+        <a class="text-slate-500 hover:text-emerald-500 transition-colors" href="#">Dashboard</a>
+        <span class="material-symbols-outlined text-slate-400 mx-2 text-base">chevron_right</span>
+        <a class="text-slate-500 hover:text-emerald-500 transition-colors" href="#">Inventory</a>
+        <span class="material-symbols-outlined text-slate-400 mx-2 text-base">chevron_right</span>
+        <span class="text-slate-900">Add Medication</span>
+      </nav>
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-2">Add New Medication</h2>
+          <p class="text-slate-500 text-base max-w-2xl">Enter the details below to register a new item in the inventory system.</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-6 md:p-8">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
+            <div class="md:col-span-12">
+              <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined fill text-emerald-500">badge</span>
+                Identification
+              </h3>
+            </div>
+            <div class="md:col-span-6">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Medication Name <span class="text-red-500">*</span></label>
+              <input class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all shadow-sm" placeholder="e.g. Amoxicillin" type="text"/>
+            </div>
+            <div class="md:col-span-6">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Category <span class="text-red-500">*</span></label>
+              <div class="relative">
+                <select class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 appearance-none cursor-pointer transition-all shadow-sm">
+                  <option disabled selected value="">Select Category</option>
+                  <option>Antibiotics</option>
+                  <option>Pain Killers</option>
+                  <option>Vitamins</option>
+                </select>
+                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+              </div>
+            </div>
+            <div class="md:col-span-12 mt-4 pt-4 border-t border-dashed border-slate-200">
+              <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined fill text-emerald-500">vaccines</span>
+                Product Details
+              </h3>
+            </div>
+            <div class="md:col-span-6 lg:col-span-4">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Dosage <span class="text-red-500">*</span></label>
+              <div class="relative">
+                <input class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all pr-12 shadow-sm" placeholder="e.g. 500" type="text"/>
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">mg</span>
+              </div>
+            </div>
+            <div class="md:col-span-6 lg:col-span-4">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Form <span class="text-red-500">*</span></label>
+              <div class="relative">
+                <select class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 appearance-none cursor-pointer transition-all shadow-sm">
+                  <option disabled selected value="">Select Form</option>
+                  <option>Tablet</option>
+                  <option>Capsule</option>
+                  <option>Liquid / Syrup</option>
+                  <option>Injection</option>
+                  <option>Cream / Ointment</option>
+                </select>
+                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+              </div>
+            </div>
+            <div class="md:col-span-6 lg:col-span-4">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Expiration Date</label>
+              <input class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all shadow-sm" type="date"/>
+            </div>
+            <div class="md:col-span-12 mt-4 pt-4 border-t border-dashed border-slate-200">
+              <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined fill text-emerald-500">inventory_2</span>
+                Inventory &amp; Pricing
+              </h3>
+            </div>
+            <div class="md:col-span-6 lg:col-span-4">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Stock Quantity <span class="text-red-500">*</span></label>
+              <input class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all shadow-sm" placeholder="0" type="number"/>
+            </div>
+            <div class="md:col-span-6 lg:col-span-4">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Price per Unit <span class="text-red-500">*</span></label>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg font-medium">$</span>
+                <input class="w-full h-12 pl-10 pr-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all shadow-sm" placeholder="0.00" step="0.01" type="number"/>
+              </div>
+            </div>
+            <div class="md:col-span-6 lg:col-span-4">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Seuil Alerte <span class="text-red-500">*</span></label>
+              <input class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all shadow-sm" placeholder="e.g. 10" type="number"/>
+            </div>
+            <div class="md:col-span-12">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Description</label>
+              <textarea class="w-full p-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all resize-y min-h-[120px] shadow-sm" placeholder="Enter any additional details, storage instructions..." rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-6 py-5 md:px-8 border-t border-slate-200 flex flex-col md:flex-row items-center justify-end gap-4">
+          <button class="w-full md:w-auto px-6 py-3 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 font-bold hover:bg-white transition-colors shadow-sm">
+            Cancel
+          </button>
+          <button class="w-full md:w-auto px-8 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined">add</span>
+            Add Medication
+          </button>
+        </div>
+      </div>
+    </div>
+  

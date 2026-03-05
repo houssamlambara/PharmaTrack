@@ -1,0 +1,116 @@
+<div class="flex h-screen overflow-hidden bg-slate-50 font-display text-slate-900">
+
+    <!-- Sidebar -->
+    <aside
+        class="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col h-full relative z-20 shadow-sm shrink-0">
+        <div class="p-6 flex items-center gap-3">
+            <div
+                class="h-10 w-10 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                <span class="material-symbols-outlined fill animate-fade-in">local_pharmacy</span>
+            </div>
+            <div>
+                <h1 class="text-base font-bold text-slate-800 leading-tight">PharmaTrack</h1>
+                <p class="text-xs text-slate-500">Manager Portal</p>
+            </div>
+        </div>
+
+        <div class="flex-1 px-4 py-4 flex flex-col gap-1.5 overflow-y-auto scrollbar-hide">
+            <a routerLink="/dashboard"
+                routerLinkActive="active-nav bg-primary/10 text-primary shadow-sm shadow-primary/5"
+                [routerLinkActiveOptions]="{exact: true}"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+                <span class="text-sm font-semibold">Dashboard</span>
+            </a>
+            <a routerLink="/medicaments/list"
+                routerLinkActive="active-nav bg-primary/10 text-primary shadow-sm shadow-primary/5"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">inventory_2</span>
+                <span class="text-sm font-medium">Inventory</span>
+            </a>
+            <a routerLink="/ventes"
+                routerLinkActive="bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 font-bold"
+                [routerLinkActiveOptions]="{exact: false}" #rlaSales="routerLinkActive"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                    [ngClass]="{'text-emerald-500': rlaSales.isActive}">point_of_sale</span>
+                <span class="text-sm font-medium"
+                    [ngClass]="{'font-bold text-emerald-600': rlaSales.isActive}">Sales</span>
+            </a>
+            <a href="#"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">bar_chart</span>
+                <span class="text-sm font-medium">Reports</span>
+            </a>
+            <div class="mt-4 mb-2 px-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Approvisionnement
+            </div>
+            <a routerLink="/fournisseurs"
+                routerLinkActive="active-nav bg-primary/10 text-primary shadow-sm shadow-primary/5"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">local_shipping</span>
+                <span class="text-sm font-medium">Fournisseurs</span>
+            </a>
+            <a routerLink="/commande-fournisseur"
+                routerLinkActive="active-nav bg-primary/10 text-primary shadow-sm shadow-primary/5"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">receipt_long</span>
+                <span class="text-sm font-medium">Commandes (Achat)</span>
+            </a>
+            <a routerLink="/users" routerLinkActive="active-nav bg-primary/10 text-primary shadow-sm shadow-primary/5"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">group</span>
+                <span class="text-sm font-medium">Customers</span>
+            </a>
+            <div class="my-2 border-t border-slate-100 mx-2"></div>
+            <a href="#"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">settings</span>
+                <span class="text-sm font-medium">Settings</span>
+            </a>
+            <a href="#"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">help</span>
+                <span class="text-sm font-medium">Help &amp; Support</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+
+        <!-- Top Header -->
+        <header
+            class="h-16 flex items-center justify-between px-6 border-b border-slate-200 bg-white shrink-0 z-10 sticky top-0">
+            <div class="flex items-center gap-4">
+                <div
+                    class="hidden md:flex items-center gap-2 text-slate-500 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100">
+                    <span class="material-symbols-outlined fill text-lg text-emerald-500">calendar_today</span>
+                    <span class="text-sm font-semibold" id="current-date">Feb 27, 2026</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="relative hidden md:block w-64 lg:w-96">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+                    <input
+                        class="w-full bg-slate-50 text-slate-900 text-sm rounded-lg pl-10 pr-4 py-2.5 border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 placeholder-slate-400 transition-all outline-none"
+                        placeholder="Search..." type="text" />
+                </div>
+                <button
+                    class="relative p-2 rounded-lg hover:bg-slate-50 text-slate-500 hover:text-emerald-600 transition-colors transform hover:scale-110 duration-200">
+                    <span class="material-symbols-outlined text-[24px]">notifications</span>
+                    <span class="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-red-500 border border-white"></span>
+                </button>
+                <div class="h-9 w-9 rounded-full bg-cover bg-center ring-2 ring-emerald-500/20 cursor-pointer ml-2 hover:scale-105 transition-transform"
+                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDizaKHMybg4vGp8WTnQy4AL9s7Odi1O3KghQ8K4YMiRnN7plrU_Zk1ua63I9cF5ohIuZPQBYi8IDp5lzYWoaM6P3zwxhalifEUoeK-K7z1_5udtDRs1AUAOEo_7Idy7QoquqgxE6oJw_mcLEsXW8NDo6eHDJpjWwlCXLoOaXCm0IoyPVWgku4GZDLwoxASoXGGxsEjeGkUjiL9l9RWbtyr3g2jHusNQWq_MycYPdMJ-I9eQiBtKbIyj3wLNlpge54l8kUG0zZhTpA5');">
+                </div>
+            </div>
+        </header>
+
+        <!-- Router Outlet Wrapper -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar">
+            <router-outlet></router-outlet>
+        </div>
+
+    </main>
+</div>
