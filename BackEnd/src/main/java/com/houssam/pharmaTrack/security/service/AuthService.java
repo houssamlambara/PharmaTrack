@@ -12,6 +12,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.houssam.pharmaTrack.dto.responseDTO.UserResponseDTO;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -77,5 +80,19 @@ public class AuthService {
                 .prenom(user.getPrenom())
                 .role(user.getRole().name())
                 .build();
+    }
+
+    public List<UserResponseDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> UserResponseDTO.builder()
+                        .id(user.getId())
+                        .nom(user.getNom())
+                        .prenom(user.getPrenom())
+                        .email(user.getEmail())
+                        .role(user.getRole())
+                        .actif(user.isActif())
+                        .dateCreation(user.getDateCreation())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../env/environment';
+import { UserResponseDTO } from '../../features/user/models/user.model';
 
 export interface AuthResponse {
     accessToken: string;
@@ -44,6 +45,10 @@ export class AuthService {
 
     register(userData: any): Observable<any> {
         return this.http.post<any>(`${environment.apiUrl}/auth/register`, userData);
+    }
+
+    getUsers(): Observable<UserResponseDTO[]> {
+        return this.http.get<UserResponseDTO[]>(`${environment.apiUrl}/auth/users`);
     }
 
     logout(): void {

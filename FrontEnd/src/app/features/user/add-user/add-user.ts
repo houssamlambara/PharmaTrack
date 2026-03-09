@@ -1,16 +1,17 @@
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, Output, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
     selector: 'app-add-user',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterLink],
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './add-user.html'
 })
 export class AddUserComponent {
+    @Output() userAdded = new EventEmitter<void>();
+
     registerForm: FormGroup;
     isLoading = false;
     errorMessage = '';
@@ -18,15 +19,15 @@ export class AddUserComponent {
 
     private fb = inject(FormBuilder);
     private authService = inject(AuthService);
-    private router = inject(Router);
+    private cdr = inject(ChangeDetectorRef);
 
     constructor() {
         this.registerForm = this.fb.group({
             nom: ['', [Validators.required, Validators.minLength(2)]],
             prenom: ['', [Validators.required, Validators.minLength(2)]],
             email: ['', [Validators.required, Validators.email]],
-            password: ['', [Validators.required, Validators.minLength(4)]],
-            role: ['PHARMACIEN', [Validators.required]] // Par défaut
+            password: ['', [Validators.required, Validators.minLength(3)]],
+            role: ['CAISSIER', [Validators.required]]
         });
     }
 
@@ -41,22 +42,25 @@ export class AddUserComponent {
         this.successMessage = '';
 
         this.authService.register(this.registerForm.value).subscribe({
-            next: (res) => {
+            next: () => {
                 this.isLoading = false;
                 this.successMessage = 'Utilisateur créé avec succès !';
-                this.registerForm.reset({ role: 'PHARMACIEN' });
-
-                // Optionnel : rediriger vers la liste des utilisateurs après 2 secondes
-                // setTimeout(() => this.router.navigate(['/users']), 2000);
+                this.registerForm.reset({ role: 'CAISSIER' });
+                this.userAdded.emit();
+                this.cdr.detectChanges();
+                setTimeout(() => {
+                    this.successMessage = '';
+                    this.cdr.detectChanges();
+                }, 3000);
             },
             error: (err) => {
                 this.isLoading = false;
-                console.error('Erreur lors de la création:', err);
                 if (err.status === 403) {
-                    this.errorMessage = 'Accès refusé : Seul un Administrateur peut créer des utilisateurs.';
+                    this.errorMessage = 'Accès refusé : Seul un Admin peut créer des utilisateurs.';
                 } else {
-                    this.errorMessage = 'Une erreur est survenue lors de la création de l\'utilisateur.';
+                    this.errorMessage = 'Erreur lors de la création.';
                 }
+                this.cdr.detectChanges();
             }
         });
     }
