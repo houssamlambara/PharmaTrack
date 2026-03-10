@@ -1,0 +1,116 @@
+<div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+    <h3 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+        <div class="p-1.5 bg-emerald-50 text-emerald-500 rounded-lg">
+            <span class="material-symbols-outlined text-[20px]">point_of_sale</span>
+        </div>
+        Nouvelle Vente
+    </h3>
+
+    <form [formGroup]="venteForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+
+        <div *ngIf="successMessage"
+            class="text-sm font-medium text-emerald-700 bg-emerald-50 px-4 py-3 rounded-xl border border-emerald-200 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+            {{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage"
+            class="text-sm font-medium text-red-700 bg-red-50 px-4 py-3 rounded-xl border border-red-200 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">error</span>
+            {{ errorMessage }}
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Nom Client</label>
+                <input formControlName="clientNom" type="text" placeholder="Optionnel..."
+                    class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm transition-all">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Paiement <span
+                        class="text-red-500">*</span></label>
+                <select formControlName="methodePaiement"
+                    class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm transition-all appearance-none cursor-pointer">
+                    <option value="ESPECE">Espèces</option>
+                    <option value="CARTE_BANCAIRE">Carte Bancaire</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="border-t border-slate-100 pt-4">
+            <div class="flex items-center justify-between mb-3">
+                <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-slate-400">list_alt</span>
+                    Articles
+                </h4>
+                <button type="button" (click)="addItem()"
+                    class="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors">
+                    <span class="material-symbols-outlined text-[16px]">add</span>
+                    Ajouter ligne
+                </button>
+            </div>
+
+            <div formArrayName="items" class="flex flex-col gap-3">
+                <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i"
+                    class="p-4 bg-slate-50 border border-slate-200 rounded-xl relative group">
+
+                    <div class="flex items-start gap-3">
+                        <div class="flex-1 grid grid-cols-1 gap-3">
+
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Médicament
+                                    <span class="text-red-500">*</span></label>
+                                <select formControlName="medicamentId"
+                                    class="w-full h-10 bg-white border border-slate-200 rounded-lg px-3 focus:outline-none focus:border-emerald-500 text-sm appearance-none cursor-pointer"
+                                    [ngClass]="{'border-red-400': item.get('medicamentId')?.invalid && item.get('medicamentId')?.touched}">
+                                    <option value="" disabled selected>{{ isLoadingMedicaments ? 'Chargement...' :
+                                        'Choisir...' }}</option>
+                                    <option *ngFor="let med of medicaments" [value]="med.id">{{ med.nom }} ({{
+                                        med.dosage }})</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Quantité
+                                        <span class="text-red-500">*</span></label>
+                                    <input formControlName="quantite" type="number" min="1"
+                                        class="w-full h-10 bg-white border border-slate-200 rounded-lg px-3 focus:outline-none focus:border-emerald-500 text-sm"
+                                        [ngClass]="{'border-red-400': item.get('quantite')?.invalid && item.get('quantite')?.touched}">
+                                </div>
+                                <div class="flex flex-col justify-end">
+                                    <div *ngIf="item.get('medicamentId')?.value"
+                                        class="text-xs text-slate-600 bg-white border border-slate-200 rounded-lg px-3 py-2.5">
+                                        <span class="font-bold text-emerald-600">{{
+                                            getMedicamentPrix(item.get('medicamentId')?.value) }} DH</span>
+                                        <span class="text-slate-400 ml-1">| Stock: {{
+                                            getMedicamentStock(item.get('medicamentId')?.value) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button *ngIf="items.length > 1" type="button" (click)="removeItem(i)"
+                            class="mt-6 p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
+                            <span class="material-symbols-outlined text-[18px]">close</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between p-4 bg-emerald-50/50 border border-emerald-100 rounded-xl">
+            <span class="text-sm font-bold text-slate-600">Total :</span>
+            <span class="text-lg font-extrabold text-emerald-600">{{ getTotal() | number:'1.2-2' }} DH</span>
+        </div>
+
+        <div class="pt-2">
+            <button type="submit" [disabled]="isLoading"
+                class="h-12 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/25 transition-all active:scale-[0.98] hover:-translate-y-0.5 text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:hover:translate-y-0">
+                <span *ngIf="isLoading" class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
+                <span *ngIf="!isLoading" class="material-symbols-outlined text-[18px]">receipt</span>
+                <span>{{ isLoading ? 'Traitement...' : 'Valider la vente' }}</span>
+            </button>
+        </div>
+    </form>
+</div>
