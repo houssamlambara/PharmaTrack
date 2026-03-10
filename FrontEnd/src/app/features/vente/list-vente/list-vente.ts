@@ -4,10 +4,12 @@ import { AddVenteComponent } from '../add-vente/add-vente';
 import { VenteService } from '../services/vente.service';
 import { VenteResponseDTO } from '../models/vente.model';
 
+import { RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-list-vente',
   standalone: true,
-  imports: [CommonModule, AddVenteComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './list-vente.html'
 })
 export class ListVenteComponent implements OnInit {

@@ -2,15 +2,15 @@
   <header class="flex-shrink-0 flex flex-col gap-5 bg-transparent mb-6">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-up">
       <div>
-        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Point de Vente</h2>
-        <p class="text-slate-500 text-sm mt-1">Enregistrez les ventes au comptoir et suivez le chiffre d'affaires.</p>
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Historique des Ventes</h2>
+        <p class="text-slate-500 text-sm mt-1">Consultez l'historique et les statistiques du chiffre d'affaires.</p>
       </div>
-      <button (click)="openAddModal()"
+      <a routerLink="/ventes"
         class="flex items-center justify-center gap-2 h-10 px-5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-lg shadow-lg shadow-emerald-500/20 transition-all active:scale-95 hover:-translate-y-0.5 group">
         <span
-          class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:rotate-90">add</span>
-        <span>Nouvelle Vente</span>
-      </button>
+          class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:-translate-x-1">arrow_back</span>
+        <span>Retour au Point de Vente</span>
+      </a>
     </div>
   </header>
 
@@ -62,8 +62,8 @@
     <select (change)="onFilterPaiement($event)"
       class="h-10 px-3 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm focus:outline-none focus:border-emerald-500 cursor-pointer shadow-sm">
       <option value="">Tous les Paiements</option>
-      <option value="ESPECE">💵 Espèces</option>
-      <option value="CARTE_BANCAIRE">💳 Carte Bancaire</option>
+      <option value="ESPECE">Espèces</option>
+      <option value="CARTE_BANCAIRE">Carte Bancaire</option>
     </select>
   </div>
 
@@ -143,38 +143,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
-  </div>
-</div>
-
-<div *ngIf="isAddModalOpen" class="fixed inset-0 z-[100] overflow-hidden" role="dialog" aria-modal="true">
-  <div class="absolute inset-0 overflow-hidden">
-    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" (click)="closeAddModal()"></div>
-
-    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-      <div
-        class="pointer-events-auto w-screen max-w-lg transform transition-transform duration-300 ease-in-out translate-x-0">
-        <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-2xl">
-
-          <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-emerald-50 text-emerald-500 rounded-lg">
-                <span class="material-symbols-outlined text-[20px]">point_of_sale</span>
-              </div>
-              <h2 class="text-xl font-bold text-slate-900">Enregistrer une Vente</h2>
-            </div>
-            <button type="button" (click)="closeAddModal()"
-              class="rounded-full p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-              <span class="material-symbols-outlined text-xl">close</span>
-            </button>
-          </div>
-
-          <div class="flex-1 p-6 bg-slate-50/50">
-            <app-add-vente (venteAdded)="onVenteAdded()"></app-add-vente>
-          </div>
-
-        </div>
-      </div>
     </div>
   </div>
 </div>
