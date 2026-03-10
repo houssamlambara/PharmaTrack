@@ -37,6 +37,10 @@ export const routes: Routes = [
       {
         path: 'users',
         loadChildren: () => import('./features/user/user.routes').then(m => m.userRoutes)
+      },
+      {
+        path: 'mouvements',
+        loadChildren: () => import('./features/mouvement-stock/mouvement-stock.routes').then(m => m.mouvementStockRoutes)
       }
     ]
   },

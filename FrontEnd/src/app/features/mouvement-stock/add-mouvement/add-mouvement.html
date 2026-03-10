@@ -1,0 +1,103 @@
+<div *ngIf="isOpen" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-all duration-300"
+    (click)="close()">
+</div>
+
+<div class="fixed inset-y-0 right-0 w-[400px] bg-white shadow-[-10px_0_30px_rgba(0,0,0,0.1)] z-50 transform transition-transform duration-300 ease-in-out flex flex-col"
+    [ngClass]="isOpen ? 'translate-x-0' : 'translate-x-full'">
+
+    <div class="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-amber-50 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="h-8 w-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
+                <span class="material-symbols-outlined text-[18px]">sync_alt</span>
+            </div>
+            <h2 class="text-lg font-bold text-slate-800">Ajustement Manuel</h2>
+        </div>
+        <button (click)="close()"
+            class="h-8 w-8 rounded-full hover:bg-amber-100/50 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-6 custom-scrollbar">
+        <div *ngIf="errorMessage"
+            class="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 text-red-600">
+            <span class="material-symbols-outlined shrink-0">error</span>
+            <p class="text-sm font-medium">{{ errorMessage }}</p>
+        </div>
+
+        <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4 mb-6 text-sm text-blue-700 flex gap-3">
+            <span class="material-symbols-outlined shrink-0 text-blue-500">info</span>
+            <p>Cet outil sert à ajuster le stock manuellement (ex: médicaments périmés, invendables, erreurs de
+                comptage).</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" #mouvementForm="ngForm" class="flex flex-col gap-5">
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[13px] font-bold text-slate-700">Type de Mouvement</label>
+                <div
+                    class="h-11 px-4 bg-amber-50 border border-amber-200 text-amber-700 font-bold rounded-xl flex items-center gap-2 cursor-not-allowed">
+                    <span class="material-symbols-outlined text-[18px]">sync_alt</span>
+                    AJUSTEMENT
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[13px] font-bold text-slate-700">Médicament <span
+                        class="text-red-500">*</span></label>
+                <div class="relative">
+                    <span
+                        class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">medication</span>
+                    <select [(ngModel)]="mouvement.medicamentId" name="medicamentId" required
+                        class="h-11 w-full pl-11 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all cursor-pointer appearance-none text-slate-700 font-medium">
+                        <option value="" disabled selected>Sélectionner un médicament...</option>
+                        <option *ngFor="let med of medicaments" [value]="med.id">{{ med.nom }} (En stock: {{
+                            med.quantiteStock }})</option>
+                    </select>
+                    <span
+                        class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">expand_more</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[13px] font-bold text-slate-700">Quantité à retirer <span
+                        class="text-red-500">*</span></label>
+                <div class="flex items-center">
+                    <button type="button" (click)="mouvement.quantite = Math.max(1, mouvement.quantite - 1)"
+                        class="h-11 w-11 flex items-center justify-center bg-slate-100 border border-slate-200 border-r-0 rounded-l-xl text-slate-500 hover:bg-slate-200 transition-colors">
+                        <span class="material-symbols-outlined">remove</span>
+                    </button>
+                    <input [(ngModel)]="mouvement.quantite" name="quantite" type="number" min="1" required
+                        class="h-11 w-full text-center font-bold text-lg bg-white border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all" />
+                    <button type="button" (click)="mouvement.quantite = mouvement.quantite + 1"
+                        class="h-11 w-11 flex items-center justify-center bg-slate-100 border border-slate-200 border-l-0 rounded-r-xl text-slate-500 hover:bg-slate-200 transition-colors">
+                        <span class="material-symbols-outlined">add</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[13px] font-bold text-slate-700">Motif de l'ajustement <span
+                        class="text-red-500">*</span></label>
+                <textarea [(ngModel)]="mouvement.motif" name="motif" required rows="3"
+                    placeholder="Ex: 2 boîtes périmées détruites..."
+                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all resize-none text-slate-700"></textarea>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="p-6 border-t border-slate-100 bg-slate-50 flex gap-3 shrink-0">
+        <button type="button" (click)="close()"
+            class="flex-1 h-11 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-colors">
+            Annuler
+        </button>
+        <button type="button" (click)="onSubmit()"
+            [disabled]="isSubmitting || !mouvement.medicamentId || !mouvement.motif"
+            class="flex-[2] h-11 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-lg shadow-amber-500/30 transition-all active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2">
+            <span *ngIf="isSubmitting" class="material-symbols-outlined animate-spin text-[20px]">refresh</span>
+            <span *ngIf="!isSubmitting" class="material-symbols-outlined text-[20px]">save</span>
+            <span>Enregistrer</span>
+        </button>
+    </div>
+</div>
