@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { AddFournisseurComponent } from './add-fournisseur/add-fournisseur';
+import { ListFournisseurComponent } from './list-fournisseur/list-fournisseur';
 
 export const fournisseurRoutes: Routes = [
-  { path: 'add', component: AddFournisseurComponent }
+  { path: '', component: ListFournisseurComponent }
 ];
 
