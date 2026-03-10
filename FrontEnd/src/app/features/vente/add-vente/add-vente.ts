@@ -1,115 +1,183 @@
-import { Component, EventEmitter, Output, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { VenteService } from '../services/vente.service';
 import { MedicamentService } from '../../medicament/services/medicament.service';
+import { CategorieService } from '../../categorie/services/categorie.service';
 import { MedicamentResponseDTO } from '../../medicament/models/medicament.model';
+import { CategorieResponseDTO } from '../../categorie/models/categorie.model';
+import { VenteRequestDTO, VenteItemsRequestDTO } from '../models/vente.model';
+
+interface CartItem {
+    medicament: MedicamentResponseDTO;
+    quantite: number;
+}
 
 @Component({
     selector: 'app-add-vente',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, FormsModule, RouterModule],
     templateUrl: './add-vente.html'
 })
 export class AddVenteComponent implements OnInit {
-    @Output() venteAdded = new EventEmitter<void>();
+    isCartOpen: boolean = true;
 
-    venteForm: FormGroup;
     medicaments: MedicamentResponseDTO[] = [];
+    categories: CategorieResponseDTO[] = [];
+
+    searchTerm: string = '';
+    selectedCategoryId: string | null = null;
+
+    cart: CartItem[] = [];
+    methodePaiement: 'ESPECE' | 'CARTE_BANCAIRE' = 'ESPECE';
+    clientNom: string = '';
 
     isLoading = false;
-    isLoadingMedicaments = false;
-    errorMessage = '';
+    isProcessing = false;
     successMessage = '';
+    errorMessage = '';
 
-    private fb = inject(FormBuilder);
     private venteService = inject(VenteService);
     private medicamentService = inject(MedicamentService);
+    private categorieService = inject(CategorieService);
     private cdr = inject(ChangeDetectorRef);
 
-    constructor() {
-        this.venteForm = this.fb.group({
-            clientNom: [''],
-            methodePaiement: ['ESPECE', Validators.required],
-            items: this.fb.array([])
-        });
-    }
-
-    get items(): FormArray {
-        return this.venteForm.get('items') as FormArray;
-    }
-
     ngOnInit() {
-        this.loadMedicaments();
-        this.addItem();
+        this.loadCatalog();
     }
 
-    loadMedicaments() {
-        this.isLoadingMedicaments = true;
+    loadCatalog() {
+        this.isLoading = true;
+
+
+        this.categorieService.getAllCategories().subscribe({
+            next: (res: any) => {
+                const data = res.data || res;
+                this.categories = Array.isArray(data) ? data : [];
+                this.cdr.detectChanges();
+            }
+        });
+
+
         this.medicamentService.getAllMedicaments().subscribe({
             next: (res: any) => {
                 const data = res.data || res;
-                this.medicaments = Array.isArray(data) ? data.filter((m: MedicamentResponseDTO) => m.actif) : [];
-                this.isLoadingMedicaments = false;
+                this.medicaments = Array.isArray(data)
+                    ? data.filter((m: MedicamentResponseDTO) => m.actif && m.quantiteStock > 0)
+                    : [];
+                this.isLoading = false;
                 this.cdr.detectChanges();
             },
             error: () => {
-                this.isLoadingMedicaments = false;
+                this.isLoading = false;
+                this.errorMessage = 'Erreur lors du chargement du catalogue.';
+                this.cdr.detectChanges();
             }
         });
     }
 
-    addItem() {
-        const itemGroup = this.fb.group({
-            medicamentId: ['', Validators.required],
-            quantite: [1, [Validators.required, Validators.min(1)]]
+    get filteredMedicaments(): MedicamentResponseDTO[] {
+        return this.medicaments.filter(med => {
+            const matchSearch = !this.searchTerm ||
+                med.nom.toLowerCase().includes(this.searchTerm.toLowerCase());
+
+            const matchCategory = !this.selectedCategoryId || med.categorieId === this.selectedCategoryId;
+
+            return matchSearch && matchCategory;
         });
-        this.items.push(itemGroup);
     }
 
-    removeItem(index: number) {
-        if (this.items.length > 1) {
-            this.items.removeAt(index);
+    selectCategory(id: string | null) {
+        this.selectedCategoryId = id;
+    }
+
+    toggleCart() {
+        this.isCartOpen = !this.isCartOpen;
+    }
+
+
+
+    addToCart(med: MedicamentResponseDTO) {
+        const existing = this.cart.find(item => item.medicament.id === med.id);
+        if (existing) {
+            if (existing.quantite < med.quantiteStock) {
+                existing.quantite++;
+            } else {
+                this.showTemporaryError(`Stock maximum atteint pour ${med.nom}`);
+            }
+        } else {
+            this.cart.push({ medicament: med, quantite: 1 });
+            this.isCartOpen = true;
         }
     }
 
-    getMedicamentPrix(medicamentId: string): number {
-        const med = this.medicaments.find(m => m.id === medicamentId);
-        return med ? med.prixUnitaire : 0;
+    removeFromCart(index: number) {
+        this.cart.splice(index, 1);
     }
 
-    getMedicamentStock(medicamentId: string): number {
-        const med = this.medicaments.find(m => m.id === medicamentId);
-        return med ? med.quantiteStock : 0;
-    }
+    updateQuantity(index: number, change: number) {
+        const item = this.cart[index];
+        const newQty = item.quantite + change;
 
-    getTotal(): number {
-        return this.items.controls.reduce((total, item) => {
-            const medId = item.get('medicamentId')?.value;
-            const qty = item.get('quantite')?.value || 0;
-            const prix = this.getMedicamentPrix(medId);
-            return total + (qty * prix);
-        }, 0);
-    }
-
-    onSubmit() {
-        if (this.venteForm.invalid || this.items.length === 0) {
-            this.venteForm.markAllAsTouched();
-            return;
+        if (newQty <= 0) {
+            this.removeFromCart(index);
+        } else if (newQty > item.medicament.quantiteStock) {
+            this.showTemporaryError(`Stock disponible: ${item.medicament.quantiteStock}`);
+        } else {
+            item.quantite = newQty;
         }
+    }
 
-        this.isLoading = true;
+    get cartTotal(): number {
+        return this.cart.reduce((total, item) => total + (item.quantite * item.medicament.prixUnitaire), 0);
+    }
+
+    get cartItemsCount(): number {
+        return this.cart.reduce((count, item) => count + item.quantite, 0);
+    }
+
+    showTemporaryError(msg: string) {
+        this.errorMessage = msg;
+        this.cdr.detectChanges();
+        setTimeout(() => {
+            this.errorMessage = '';
+            this.cdr.detectChanges();
+        }, 3000);
+    }
+
+
+
+    selectPaymentMethod(method: 'ESPECE' | 'CARTE_BANCAIRE') {
+        this.methodePaiement = method;
+    }
+
+    processSale() {
+        if (this.cart.length === 0) return;
+
+        this.isProcessing = true;
         this.errorMessage = '';
-        this.successMessage = '';
 
-        this.venteService.createVente(this.venteForm.value).subscribe({
+        const venteRequest: VenteRequestDTO = {
+            clientNom: this.clientNom.trim() || undefined,
+            methodePaiement: this.methodePaiement,
+            items: this.cart.map(item => ({
+                medicamentId: item.medicament.id,
+                quantite: item.quantite
+            }))
+        };
+
+        this.venteService.createVente(venteRequest).subscribe({
             next: () => {
-                this.isLoading = false;
-                this.successMessage = 'Vente enregistrée avec succès !';
-                this.venteForm.reset({ methodePaiement: 'ESPECE', clientNom: '' });
-                this.items.clear();
-                this.addItem();
-                this.venteAdded.emit();
+                this.isProcessing = false;
+                this.successMessage = 'Vente validée avec succès !';
+
+
+                this.cart = [];
+                this.clientNom = '';
+                this.methodePaiement = 'ESPECE';
+                this.loadCatalog();
+
                 this.cdr.detectChanges();
                 setTimeout(() => {
                     this.successMessage = '';
@@ -117,14 +185,8 @@ export class AddVenteComponent implements OnInit {
                 }, 3000);
             },
             error: (err) => {
-                this.isLoading = false;
-                if (err.status === 400) {
-                    this.errorMessage = err.error?.message || 'Stock insuffisant ou données invalides.';
-                } else if (err.status === 403) {
-                    this.errorMessage = 'Accès refusé.';
-                } else {
-                    this.errorMessage = 'Erreur lors de la vente.';
-                }
+                this.isProcessing = false;
+                this.errorMessage = err.error?.message || 'Erreur lors de la validation de la vente.';
                 this.cdr.detectChanges();
             }
         });
