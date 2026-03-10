@@ -68,14 +68,11 @@ export class ListFournisseurComponent implements OnInit {
 
     onFournisseurAdded() {
         this.loadFournisseurs();
-        // Optionnel : fermer le modal après un succès
-        // this.closeAddModal(); 
     }
 
     toggleStatus(fournisseur: FournisseurResponseDTO) {
         this.fournisseurService.toggleActif(fournisseur.id).subscribe({
             next: (res: any) => {
-                // Mettre à jour localement ou recharger
                 fournisseur.actif = !fournisseur.actif;
                 this.calculateStats();
                 this.cdr.detectChanges();
