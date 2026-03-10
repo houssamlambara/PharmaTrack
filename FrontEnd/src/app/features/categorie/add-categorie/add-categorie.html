@@ -1,0 +1,41 @@
+<div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+    <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px] text-emerald-500">add_circle</span>
+        Ajouter une catégorie
+    </h3>
+
+    <form [formGroup]="categorieForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+
+        <div *ngIf="successMessage"
+            class="text-xs text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200">
+            {{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage" class="text-xs text-red-700 bg-red-50 px-3 py-2 rounded-lg border border-red-200">
+            {{ errorMessage }}
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold uppercase text-slate-500 mb-1 ml-1">Nom</label>
+            <input formControlName="nom" type="text" placeholder="Ex: Antibiotiques"
+                class="w-full h-11 bg-slate-50 border border-slate-200 rounded-lg px-4 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm transition-all"
+                [ngClass]="{'border-red-400': categorieForm.get('nom')?.invalid && categorieForm.get('nom')?.touched}">
+            <div *ngIf="categorieForm.get('nom')?.invalid && categorieForm.get('nom')?.touched"
+                class="text-[10px] text-red-500 mt-1 ml-1">
+                Nom requis (min 2 caractères)
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold uppercase text-slate-500 mb-1 ml-1">Description (Optionnel)</label>
+            <textarea formControlName="description" placeholder="Description courte..."
+                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm resize-none transition-all"
+                rows="2"></textarea>
+        </div>
+
+        <button type="submit" [disabled]="isLoading"
+            class="h-11 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg shadow-sm shadow-emerald-500/20 transition-all active:scale-[0.98] text-sm flex items-center justify-center gap-2 mt-1 disabled:opacity-50">
+            <span *ngIf="isLoading" class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
+            {{ isLoading ? 'Création...' : 'Enregistrer la catégorie' }}
+        </button>
+    </form>
+</div>

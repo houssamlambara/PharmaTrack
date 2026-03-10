@@ -19,6 +19,11 @@
           class="hidden md:flex items-center justify-center h-10 w-10 rounded-lg border border-gray-200 text-slate-500 hover:bg-gray-50 hover:text-primary transition-all shadow-sm group">
           <span class="material-symbols-outlined group-hover:scale-110 transition-transform">print</span>
         </button>
+        <button (click)="openCategoryModal()"
+          class="flex items-center justify-center gap-2 h-10 px-4 bg-white border border-slate-200 hover:border-emerald-500 text-slate-700 hover:text-emerald-600 font-bold text-sm rounded-lg shadow-sm transition-all active:scale-95 group">
+          <span class="material-symbols-outlined text-[18px] text-emerald-500">category</span>
+          <span>Gérer Catégories</span>
+        </button>
         <button
           class="flex items-center justify-center gap-2 h-10 px-5 bg-primary hover:bg-primary-dark text-white font-bold text-sm rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-95 hover:-translate-y-0.5 group">
           <span
@@ -427,6 +432,90 @@
           class="flex items-center justify-center h-8 w-8 rounded-lg border border-gray-200  text-slate-500 hover:bg-gray-50 :bg-gray-800 hover:text-slate-900 :text-white transition-colors shadow-sm">
           <span class="material-symbols-outlined text-sm">chevron_right</span>
         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal / Slide-over pour Gérer les Catégories (Statique) -->
+<div *ngIf="isCategoryModalOpen" class="fixed inset-0 z-[100] overflow-hidden" aria-labelledby="slide-over-title"
+  role="dialog" aria-modal="true">
+  <div class="absolute inset-0 overflow-hidden">
+    <!-- Fond assombri -->
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" (click)="closeCategoryModal()">
+    </div>
+
+    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+      <!-- Panneau latéral -->
+      <div
+        class="pointer-events-auto w-screen max-w-md transform transition-transform duration-300 ease-in-out translate-x-0">
+        <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-2xl">
+          <!-- Header du modal -->
+          <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-emerald-50 text-emerald-500 rounded-lg">
+                <span class="material-symbols-outlined text-[20px]">category</span>
+              </div>
+              <h2 class="text-xl font-bold text-slate-900" id="slide-over-title">Gérer les Catégories</h2>
+            </div>
+            <button type="button" (click)="closeCategoryModal()"
+              class="rounded-full p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+              <span class="sr-only">Fermer</span>
+              <span class="material-symbols-outlined text-xl">close</span>
+            </button>
+          </div>
+
+          <div class="flex-1 overflow-y-auto p-6 flex flex-col gap-8 bg-slate-50/50">
+
+            <!-- Composant enfant : Formulaire d'ajout -->
+            <app-add-categorie (categorieAdded)="onCategoryAdded()"></app-add-categorie>
+
+            <!-- Liste des catégories dynamiques -->
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px] text-slate-400">format_list_bulleted</span>
+                  Catégories existantes
+                </h3>
+                <span class="px-2 py-0.5 bg-slate-200 text-slate-700 text-xs font-bold rounded-full">{{
+                  categories.length }}</span>
+              </div>
+
+              <div *ngIf="isLoadingCategories" class="flex justify-center p-4">
+                <span class="material-symbols-outlined animate-spin text-emerald-500">refresh</span>
+              </div>
+
+              <div *ngIf="!isLoadingCategories && categories.length === 0"
+                class="text-center p-4 text-slate-500 text-sm border border-dashed border-slate-300 rounded-xl">
+                Aucune catégorie trouvée.
+              </div>
+
+              <div *ngIf="!isLoadingCategories" class="flex flex-col gap-3">
+
+                <!-- Carte Catégorie Dynamique -->
+                <div *ngFor="let cat of categories"
+                  class="group flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl hover:border-emerald-500/40 transition-all shadow-sm hover:shadow-md cursor-default">
+                  <div>
+                    <p class="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">{{
+                      cat.nom }}</p>
+                    <p *ngIf="cat.description" class="text-xs text-slate-500 mt-0.5 max-w-[250px] truncate"
+                      [title]="cat.description">{{ cat.description }}</p>
+                  </div>
+                  <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2 shrink-0">
+                    <!-- Delete Button -->
+                    <button (click)="deleteCategory(cat.id)"
+                      class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Supprimer">
+                      <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
     </div>
   </div>
