@@ -1,110 +1,148 @@
+<div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+  <h3 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+    <div class="p-1.5 bg-indigo-50 text-indigo-500 rounded-lg">
+      <span class="material-symbols-outlined text-[20px]">vaccines</span>
+    </div>
+    Nouveau Médicament
+  </h3>
 
-    <div class="flex-1 max-w-[1200px] w-full mx-auto p-4 md:p-8 lg:p-12">
-      <nav class="flex items-center text-sm font-medium mb-6">
-        <a class="text-slate-500 hover:text-emerald-500 transition-colors" href="#">Dashboard</a>
-        <span class="material-symbols-outlined text-slate-400 mx-2 text-base">chevron_right</span>
-        <a class="text-slate-500 hover:text-emerald-500 transition-colors" href="#">Inventory</a>
-        <span class="material-symbols-outlined text-slate-400 mx-2 text-base">chevron_right</span>
-        <span class="text-slate-900">Add Medication</span>
-      </nav>
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-        <div>
-          <h2 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-2">Add New Medication</h2>
-          <p class="text-slate-500 text-base max-w-2xl">Enter the details below to register a new item in the inventory system.</p>
+  <form [formGroup]="medicamentForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+
+    <!-- Messages -->
+    <div *ngIf="successMessage"
+      class="text-sm font-medium text-emerald-700 bg-emerald-50 px-4 py-3 rounded-xl border border-emerald-200 flex items-center gap-2 animate-fade-in">
+      <span class="material-symbols-outlined text-[18px]">check_circle</span>
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage"
+      class="text-sm font-medium text-red-700 bg-red-50 px-4 py-3 rounded-xl border border-red-200 flex items-center gap-2 animate-fade-in">
+      <span class="material-symbols-outlined text-[18px]">error</span>
+      {{ errorMessage }}
+    </div>
+
+    <div class="space-y-4">
+
+      <!-- Nom -->
+      <div>
+        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Nom du médicament <span
+            class="text-red-500">*</span></label>
+        <div class="relative">
+          <input formControlName="nom" type="text" placeholder="Ex: Paracétamol 1000mg"
+            class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm transition-all"
+            [ngClass]="{'border-red-400 focus:border-red-400 focus:ring-red-400/20': medicamentForm.get('nom')?.invalid && medicamentForm.get('nom')?.touched}">
+        </div>
+        <div *ngIf="medicamentForm.get('nom')?.invalid && medicamentForm.get('nom')?.touched"
+          class="text-[11px] text-red-500 mt-1 ml-1 font-medium animate-fade-in">
+          Nom requis (min 2 caractères)
         </div>
       </div>
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="p-6 md:p-8">
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
-            <div class="md:col-span-12">
-              <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined fill text-emerald-500">badge</span>
-                Identification
-              </h3>
-            </div>
-            <div class="md:col-span-6">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Medication Name <span class="text-red-500">*</span></label>
-              <input class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all shadow-sm" placeholder="e.g. Amoxicillin" type="text"/>
-            </div>
-            <div class="md:col-span-6">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Category <span class="text-red-500">*</span></label>
-              <div class="relative">
-                <select class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 appearance-none cursor-pointer transition-all shadow-sm">
-                  <option disabled selected value="">Select Category</option>
-                  <option>Antibiotics</option>
-                  <option>Pain Killers</option>
-                  <option>Vitamins</option>
-                </select>
-                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
-              </div>
-            </div>
-            <div class="md:col-span-12 mt-4 pt-4 border-t border-dashed border-slate-200">
-              <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined fill text-emerald-500">vaccines</span>
-                Product Details
-              </h3>
-            </div>
-            <div class="md:col-span-6 lg:col-span-4">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Dosage <span class="text-red-500">*</span></label>
-              <div class="relative">
-                <input class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all pr-12 shadow-sm" placeholder="e.g. 500" type="text"/>
-                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">mg</span>
-              </div>
-            </div>
-            <div class="md:col-span-6 lg:col-span-4">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Form <span class="text-red-500">*</span></label>
-              <div class="relative">
-                <select class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 appearance-none cursor-pointer transition-all shadow-sm">
-                  <option disabled selected value="">Select Form</option>
-                  <option>Tablet</option>
-                  <option>Capsule</option>
-                  <option>Liquid / Syrup</option>
-                  <option>Injection</option>
-                  <option>Cream / Ointment</option>
-                </select>
-                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
-              </div>
-            </div>
-            <div class="md:col-span-6 lg:col-span-4">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Expiration Date</label>
-              <input class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all shadow-sm" type="date"/>
-            </div>
-            <div class="md:col-span-12 mt-4 pt-4 border-t border-dashed border-slate-200">
-              <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined fill text-emerald-500">inventory_2</span>
-                Inventory &amp; Pricing
-              </h3>
-            </div>
-            <div class="md:col-span-6 lg:col-span-4">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Stock Quantity <span class="text-red-500">*</span></label>
-              <input class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all shadow-sm" placeholder="0" type="number"/>
-            </div>
-            <div class="md:col-span-6 lg:col-span-4">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Price per Unit <span class="text-red-500">*</span></label>
-              <div class="relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg font-medium">$</span>
-                <input class="w-full h-12 pl-10 pr-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all shadow-sm" placeholder="0.00" step="0.01" type="number"/>
-              </div>
-            </div>
-            <div class="md:col-span-6 lg:col-span-4">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Seuil Alerte <span class="text-red-500">*</span></label>
-              <input class="w-full h-12 px-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all shadow-sm" placeholder="e.g. 10" type="number"/>
-            </div>
-            <div class="md:col-span-12">
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Description</label>
-              <textarea class="w-full p-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 placeholder:text-slate-400 transition-all resize-y min-h-[120px] shadow-sm" placeholder="Enter any additional details, storage instructions..." rows="4"></textarea>
+
+      <!-- Code Barres -->
+      <div>
+        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Code-barres (EAN/UPC)</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <span class="material-symbols-outlined text-slate-400 text-[18px]">barcode</span>
+          </div>
+          <input formControlName="codeBarres" type="text" placeholder="Scanner ou taper..."
+            class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm transition-all focus:bg-indigo-50/30">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Dosage -->
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Dosage <span
+              class="text-red-500">*</span></label>
+          <input formControlName="dosage" type="text" placeholder="Ex: 500mg"
+            class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm transition-all"
+            [ngClass]="{'border-red-400 focus:border-red-400 focus:ring-red-400/20': medicamentForm.get('dosage')?.invalid && medicamentForm.get('dosage')?.touched}">
+        </div>
+
+        <!-- Forme -->
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Forme <span
+              class="text-red-500">*</span></label>
+          <select formControlName="forme"
+            class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm transition-all appearance-none cursor-pointer"
+            [ngClass]="{'border-red-400 focus:border-red-400 focus:ring-red-400/20': medicamentForm.get('forme')?.invalid && medicamentForm.get('forme')?.touched}">
+            <option value="" disabled selected>Choisir...</option>
+            <option value="Comprimé">Comprimé</option>
+            <option value="Sirop">Sirop</option>
+            <option value="Gélule">Gélule</option>
+            <option value="Pommade">Pommade</option>
+            <option value="Injection">Injection</option>
+            <option value="Sachet">Sachet</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Prix Unitaire -->
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Prix U. (DH) <span
+              class="text-red-500">*</span></label>
+          <input formControlName="prixUnitaire" type="number" step="0.01" placeholder="0.00"
+            class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm transition-all"
+            [ngClass]="{'border-red-400 focus:border-red-400 focus:ring-red-400/20': medicamentForm.get('prixUnitaire')?.invalid && medicamentForm.get('prixUnitaire')?.touched}">
+        </div>
+
+        <!-- Seuil d'alerte -->
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Seuil Alerte</label>
+          <input formControlName="seuilAlerte" type="number" min="1"
+            class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm transition-all">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Catégorie -->
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Catégorie <span
+              class="text-red-500">*</span></label>
+          <div class="relative">
+            <select formControlName="categorieId"
+              class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm transition-all appearance-none cursor-pointer"
+              [ngClass]="{'border-red-400 focus:border-red-400 focus:ring-red-400/20': medicamentForm.get('categorieId')?.invalid && medicamentForm.get('categorieId')?.touched}">
+              <option value="" disabled selected>{{ isLoadingCategories ? 'Chargement...' : 'Sélectionner...' }}
+              </option>
+              <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.nom }}</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+              <span *ngIf="isLoadingCategories"
+                class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
+              <span *ngIf="!isLoadingCategories" class="material-symbols-outlined text-[18px]">expand_more</span>
             </div>
           </div>
         </div>
-        <div class="bg-gray-50 px-6 py-5 md:px-8 border-t border-slate-200 flex flex-col md:flex-row items-center justify-end gap-4">
-          <button class="w-full md:w-auto px-6 py-3 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 font-bold hover:bg-white transition-colors shadow-sm">
-            Cancel
-          </button>
-          <button class="w-full md:w-auto px-8 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined">add</span>
-            Add Medication
-          </button>
+
+        <!-- Date Expiration -->
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Date Expiration</label>
+          <input formControlName="dateExpiration" type="date"
+            class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm transition-all text-slate-700">
         </div>
       </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 ml-1">Description</label>
+        <div class="relative">
+          <textarea formControlName="description" placeholder="Notice, usage, précautions..."
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm resize-none transition-all"
+            rows="2"></textarea>
+        </div>
+      </div>
+
     </div>
-  
+
+    <div class="pt-2">
+      <button type="submit" [disabled]="isLoading"
+        class="h-12 w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all active:scale-[0.98] hover:-translate-y-0.5 text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:hover:translate-y-0 disabled:active:scale-100">
+        <span *ngIf="isLoading" class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
+        <span *ngIf="!isLoading" class="material-symbols-outlined text-[18px]">add_task</span>
+        <span>{{ isLoading ? 'Création en cours...' : 'Ajouter le médicament' }}</span>
+      </button>
+    </div>
+  </form>
+</div>
