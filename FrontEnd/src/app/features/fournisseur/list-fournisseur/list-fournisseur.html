@@ -1,0 +1,243 @@
+<div class="flex-1 overflow-y-auto p-6 md:px-10 pb-20 custom-scrollbar">
+    <header class="flex-shrink-0 flex flex-col gap-5 bg-transparent mb-6">
+        <div class="flex items-center gap-2 text-sm text-slate-500 animate-fade-in">
+            <a class="hover:text-emerald-500 transition-colors" href="#">Partenaires</a>
+            <span class="material-symbols-outlined text-xs text-gray-400">chevron_right</span>
+            <span class="font-semibold text-gray-800">Fournisseurs</span>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-up">
+            <div>
+                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Annuaire des Fournisseurs</h2>
+                <p class="text-slate-500 text-sm mt-1">Gérez vos partenaires, grossistes et laboratoires
+                    pharmaceutiques.</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button (click)="openAddModal()"
+                    class="flex items-center justify-center gap-2 h-11 px-6 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/20 transition-all active:scale-95 group">
+                    <span
+                        class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:rotate-90">add</span>
+                    <span>Nouveau Fournisseur</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-up animation-delay-100 mb-8">
+        <!-- Total -->
+        <div
+            class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col hover:shadow-md hover:border-emerald-500/30 transition-all duration-300">
+            <div class="flex justify-between items-start">
+                <span class="text-slate-500 text-xs font-bold uppercase tracking-wider">Total Fournisseurs</span>
+                <span class="p-2 rounded-xl bg-slate-100 text-slate-600">
+                    <span class="material-symbols-outlined text-[20px]">domain</span>
+                </span>
+            </div>
+            <div class="mt-4">
+                <span class="text-3xl font-black text-slate-900">{{ totalFournisseurs }}</span>
+            </div>
+        </div>
+
+        <!-- Actifs -->
+        <div
+            class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col hover:shadow-md hover:border-emerald-500/30 transition-all duration-300 relative overflow-hidden">
+            <div
+                class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-50 rounded-full blur-2xl opacity-60 pointer-events-none">
+            </div>
+            <div class="flex justify-between items-start">
+                <span class="text-slate-500 text-xs font-bold uppercase tracking-wider">Actifs</span>
+                <span class="p-2 rounded-xl bg-emerald-50 text-emerald-500">
+                    <span class="material-symbols-outlined text-[20px]">verified</span>
+                </span>
+            </div>
+            <div class="mt-4 flex items-end gap-2">
+                <span class="text-3xl font-black text-slate-900">{{ actifsCount }}</span>
+                <span
+                    class="text-xs text-emerald-600 font-bold mb-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100">Prêts
+                    à livrer</span>
+            </div>
+        </div>
+
+        <!-- Inactifs -->
+        <div
+            class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col hover:shadow-md hover:border-red-500/30 transition-all duration-300">
+            <div class="flex justify-between items-start">
+                <span class="text-slate-500 text-xs font-bold uppercase tracking-wider">Inactifs</span>
+                <span class="p-2 rounded-xl bg-slate-50 text-slate-400">
+                    <span class="material-symbols-outlined text-[20px]">block</span>
+                </span>
+            </div>
+            <div class="mt-4">
+                <span class="text-3xl font-black text-slate-900">{{ inactifsCount }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="mb-6 flex flex-col md:flex-row gap-4 justify-between items-center animate-fade-up animation-delay-200">
+        <div class="relative w-full md:w-96 group">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <span
+                    class="material-symbols-outlined text-slate-400 group-focus-within:text-emerald-500 transition-colors">search</span>
+            </div>
+            <input (keyup)="onSearch($event)" type="text" placeholder="Rechercher par nom ou email..."
+                class="block w-full pl-11 pr-4 py-2.5 border border-slate-200 rounded-xl bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm shadow-sm transition-all hover:border-slate-300">
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div
+        class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden animate-fade-up animation-delay-300 relative min-h-[300px]">
+
+        <div *ngIf="isLoading"
+            class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center">
+            <span class="material-symbols-outlined text-4xl text-emerald-500 animate-spin mb-2">refresh</span>
+            <p class="text-sm font-medium text-slate-500">Chargement des fournisseurs...</p>
+        </div>
+
+        <div *ngIf="errorMessage" class="p-8 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-500 mb-4">
+                <span class="material-symbols-outlined text-3xl">error_outline</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Une erreur est survenue</h3>
+            <p class="text-slate-500">{{ errorMessage }}</p>
+        </div>
+
+        <table *ngIf="!isLoading && !errorMessage" class="min-w-full divide-y divide-slate-100 m-0">
+            <thead class="bg-slate-50/80">
+                <tr>
+                    <th scope="col"
+                        class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                        Fournisseur</th>
+                    <th scope="col"
+                        class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                        Contact</th>
+                    <th scope="col"
+                        class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                        Adresse</th>
+                    <th scope="col"
+                        class="px-6 py-4 text-center text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                        Statut</th>
+                    <th scope="col" class="relative px-6 py-4 font-bold text-slate-500"><span
+                            class="sr-only">Actions</span></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 bg-white">
+
+                <tr *ngIf="filteredFournisseurs.length === 0" class="hover:bg-transparent">
+                    <td colspan="5" class="px-6 py-12 text-center text-slate-500 text-sm">
+                        Aucun fournisseur trouvé.
+                    </td>
+                </tr>
+
+                <tr *ngFor="let fr of filteredFournisseurs" class="hover:bg-slate-50/50 transition-colors group">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 group-hover:scale-105 group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-[20px]">storefront</span>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-900">{{ fr.nom }}</div>
+                                <div class="text-xs text-slate-500 font-medium">Créé le {{ fr.dateCreation |
+                                    date:'dd/MM/yyyy' }}</div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col gap-1.5">
+                            <div class="flex items-center gap-2 text-sm text-slate-600">
+                                <span class="material-symbols-outlined text-[16px] text-slate-400">mail</span>
+                                {{ fr.email }}
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-slate-600">
+                                <span class="material-symbols-outlined text-[16px] text-slate-400">call</span>
+                                {{ fr.telephone }}
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="px-6 py-4">
+                        <div class="flex items-start gap-2 text-sm text-slate-600 max-w-xs">
+                            <span
+                                class="material-symbols-outlined text-[16px] text-slate-400 shrink-0 mt-0.5">location_on</span>
+                            <span class="truncate" [title]="fr.adresse">{{ fr.adresse }}</span>
+                        </div>
+                    </td>
+
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <button (click)="toggleStatus(fr)"
+                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-all hover:shadow-md"
+                            [ngClass]="fr.actif ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200'">
+                            <span class="material-symbols-outlined text-[14px]">
+                                {{ fr.actif ? 'check_circle' : 'cancel' }}
+                            </span>
+                            {{ fr.actif ? 'Actif' : 'Inactif' }}
+                        </button>
+                    </td>
+
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div
+                            class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <!-- <button class="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors border border-transparent hover:border-emerald-100" title="Modifier">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button> -->
+                            <button (click)="deleteFournisseur(fr.id)"
+                                class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100"
+                                title="Supprimer">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Slide-over (Child Component) -->
+<div *ngIf="isAddModalOpen" class="fixed inset-0 z-[100] overflow-hidden" aria-labelledby="slide-over-title"
+    role="dialog" aria-modal="true">
+    <div class="absolute inset-0 overflow-hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" (click)="closeAddModal()">
+        </div>
+
+        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <!-- Panel -->
+            <div
+                class="pointer-events-auto w-screen max-w-md transform transition-transform duration-300 ease-in-out translate-x-0 shadow-2xl border-l border-white/20">
+                <div class="flex h-full flex-col overflow-y-scroll bg-slate-50">
+                    <!-- Header -->
+                    <div
+                        class="px-6 py-5 border-b border-slate-200/60 flex items-center justify-between bg-white/80 backdrop-blur-xl sticky top-0 z-10">
+                        <h2 class="text-xl font-black text-slate-900 tracking-tight" id="slide-over-title">Gestion
+                            Fournisseurs</h2>
+                        <button type="button" (click)="closeAddModal()"
+                            class="rounded-full p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all active:scale-90">
+                            <span class="sr-only">Fermer</span>
+                            <span class="material-symbols-outlined text-xl">close</span>
+                        </button>
+                    </div>
+
+                    <!-- Body: The App Add Fournisseur Form -->
+                    <div class="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
+
+                        <div
+                            class="bg-blue-50/50 border border-blue-100 text-blue-800 text-sm rounded-2xl p-4 flex gap-3 shadow-sm">
+                            <span class="material-symbols-outlined text-blue-500 shrink-0">info</span>
+                            <p>L'ajout d'un fournisseur permet de générer de futures commandes d'approvisionnement
+                                associées à ce compte.</p>
+                        </div>
+
+                        <app-add-fournisseur (fournisseurAdded)="onFournisseurAdded()"></app-add-fournisseur>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
