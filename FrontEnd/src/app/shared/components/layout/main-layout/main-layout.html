@@ -30,17 +30,20 @@
             </a>
             <a routerLink="/ventes"
                 routerLinkActive="bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 font-bold"
-                [routerLinkActiveOptions]="{exact: false}" #rlaSales="routerLinkActive"
+                [routerLinkActiveOptions]="{exact: true}" #rlaSales="routerLinkActive"
                 class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
                 <span class="material-symbols-outlined group-hover:text-primary transition-colors"
                     [ngClass]="{'text-emerald-500': rlaSales.isActive}">point_of_sale</span>
                 <span class="text-sm font-medium"
-                    [ngClass]="{'font-bold text-emerald-600': rlaSales.isActive}">Sales</span>
+                    [ngClass]="{'font-bold text-emerald-600': rlaSales.isActive}">Ventes</span>
             </a>
-            <a href="#"
+            <a routerLink="/ventes/history" routerLinkActive="bg-emerald-500/10 text-emerald-600 font-bold"
+                [routerLinkActiveOptions]="{exact: true}" #rlaHistory="routerLinkActive"
                 class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
-                <span class="material-symbols-outlined group-hover:text-primary transition-colors">bar_chart</span>
-                <span class="text-sm font-medium">Reports</span>
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                    [ngClass]="{'text-emerald-500': rlaHistory.isActive}">history</span>
+                <span class="text-sm font-medium"
+                    [ngClass]="{'font-bold text-emerald-600': rlaHistory.isActive}">Historique Ventes</span>
             </a>
             <div class="mt-4 mb-2 px-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Approvisionnement
             </div>
@@ -60,7 +63,7 @@
                 routerLinkActive="active-nav bg-emerald-500/10 text-emerald-600 shadow-sm shadow-emerald-500/5 font-bold"
                 class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
                 <span class="material-symbols-outlined group-hover:text-emerald-500 transition-colors">swap_horiz</span>
-                <span class="text-sm font-medium">Flux & Historique</span>
+                <span class="text-sm font-medium">Mouvements de Stock</span>
             </a>
             <a routerLink="/users" routerLinkActive="active-nav bg-primary/10 text-primary shadow-sm shadow-primary/5"
                 class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-50 group transition-all duration-200">
@@ -102,13 +105,107 @@
                         class="w-full bg-slate-50 text-slate-900 text-sm rounded-lg pl-10 pr-4 py-2.5 border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 placeholder-slate-400 transition-all outline-none"
                         placeholder="Search..." type="text" />
                 </div>
-                <button
-                    class="relative p-2 rounded-lg hover:bg-slate-50 text-slate-500 hover:text-emerald-600 transition-colors transform hover:scale-110 duration-200">
-                    <span class="material-symbols-outlined text-[24px]">notifications</span>
-                    <span class="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-red-500 border border-white"></span>
-                </button>
-                <div class="h-9 w-9 rounded-full bg-cover bg-center ring-2 ring-emerald-500/20 cursor-pointer ml-2 hover:scale-105 transition-transform"
-                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDizaKHMybg4vGp8WTnQy4AL9s7Odi1O3KghQ8K4YMiRnN7plrU_Zk1ua63I9cF5ohIuZPQBYi8IDp5lzYWoaM6P3zwxhalifEUoeK-K7z1_5udtDRs1AUAOEo_7Idy7QoquqgxE6oJw_mcLEsXW8NDo6eHDJpjWwlCXLoOaXCm0IoyPVWgku4GZDLwoxASoXGGxsEjeGkUjiL9l9RWbtyr3g2jHusNQWq_MycYPdMJ-I9eQiBtKbIyj3wLNlpge54l8kUG0zZhTpA5');">
+                <!-- Notifications -->
+                <div class="relative notification-container ml-2">
+                    <button (click)="toggleNotificationMenu()"
+                        class="relative p-2 rounded-lg hover:bg-slate-50 text-slate-500 hover:text-emerald-600 transition-colors transform hover:scale-110 duration-200 focus:outline-none">
+                        <span class="material-symbols-outlined text-[24px]">notifications</span>
+                        <span *ngIf="lowStockItems.length > 0"
+                            class="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-red-500 border border-white"></span>
+                    </button>
+
+                    <!-- Dropdown Panel -->
+                    <div *ngIf="isNotificationMenuOpen"
+                        class="absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-md rounded-xl shadow-xl shadow-slate-200/50 border border-slate-100 py-2 animate-fade-down z-50 origin-top-right">
+                        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                            <h3 class="text-sm font-bold text-slate-800">Alertes Stock</h3>
+                            <span *ngIf="lowStockItems.length > 0"
+                                class="px-2 py-0.5 rounded-full bg-red-50 text-red-600 text-[10px] font-bold">{{
+                                lowStockItems.length }} urgences</span>
+                        </div>
+
+                        <div class="max-h-80 overflow-y-auto custom-scrollbar">
+                            <div *ngIf="lowStockItems.length === 0" class="px-4 py-8 text-center text-slate-500">
+                                <span class="material-symbols-outlined text-4xl mb-2 text-emerald-300">verified</span>
+                                <p class="text-sm font-medium">Tout est en ordre.</p>
+                                <p class="text-xs mt-1">Aucun produit en stock faible.</p>
+                            </div>
+
+                            <div *ngFor="let item of lowStockItems.slice(0, 5)" (click)="toggleNotificationMenu()"
+                                routerLink="/medicaments"
+                                class="px-4 py-3 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer group">
+                                <div class="flex gap-3">
+                                    <div
+                                        class="p-2 bg-red-50 rounded-lg text-red-500 shrink-0 h-9 w-9 flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-[18px]">warning</span>
+                                    </div>
+                                    <div class="overflow-hidden">
+                                        <p
+                                            class="text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition-colors truncate">
+                                            {{ item.nom }}</p>
+                                        <p class="text-xs font-medium text-slate-500 mt-0.5">Stock : <span
+                                                class="text-red-500 font-bold">{{ item.quantiteStock }} restants</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="lowStockItems.length > 0"
+                            class="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex justify-between rounded-b-xl">
+                            <a routerLink="/medicaments" (click)="toggleNotificationMenu()"
+                                class="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors">
+                                Voir détails
+                            </a>
+                            <a routerLink="/commande-fournisseur" (click)="toggleNotificationMenu()"
+                                class="text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors">
+                                + Commander
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Profile Menu -->
+                <div class="relative profile-menu-container ml-2">
+                    <button (click)="toggleProfileMenu()"
+                        class="flex items-center gap-2 hover:bg-slate-50 p-1 pr-2 rounded-full transition-colors focus:outline-none">
+                        <div
+                            class="h-9 w-9 flex items-center justify-center rounded-full bg-emerald-100 text-emerald-600 font-bold border-2 border-white shadow-sm uppercase">
+                            {{ (currentUser$ | async)?.prenom?.charAt(0) || 'U' }}{{ (currentUser$ |
+                            async)?.nom?.charAt(0) || '' }}
+                        </div>
+                        <span
+                            class="material-symbols-outlined text-[20px] text-slate-400 transition-transform duration-300"
+                            [ngClass]="{'rotate-180': isProfileMenuOpen}">expand_more</span>
+                    </button>
+
+                    <!-- Dropdown Panel -->
+                    <div *ngIf="isProfileMenuOpen"
+                        class="absolute right-0 mt-3 w-64 bg-white/80 backdrop-blur-md rounded-xl shadow-xl shadow-slate-200/50 border border-white py-2 animate-fade-down z-50 origin-top-right">
+                        <div class="px-4 py-3 border-b border-slate-100/50 flex items-center gap-3">
+                            <div
+                                class="h-10 w-10 flex items-center justify-center rounded-full bg-emerald-50 border border-emerald-100 text-lg shrink-0">
+                                👨‍⚕️
+                            </div>
+                            <div class="overflow-hidden">
+                                <p class="text-sm font-bold text-slate-800 truncate">
+                                    {{ (currentUser$ | async)?.prenom }} {{ (currentUser$ | async)?.nom }}
+                                </p>
+                                <span
+                                    class="inline-flex items-center gap-1 mt-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                                    <span class="material-symbols-outlined text-[10px]">verified_user</span>
+                                    {{ (currentUser$ | async)?.role }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="px-2 py-2">
+                            <button (click)="logout()"
+                                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-600 hover:bg-red-50 text-sm font-bold transition-colors group">
+                                <span
+                                    class="material-symbols-outlined text-[20px] group-hover:rotate-180 transition-transform duration-300">logout</span>
+                                Se déconnecter
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
