@@ -18,7 +18,7 @@ public class VenteItemsController {
     private final VenteItemsService venteItemsService;
 
     @GetMapping("/vente/{venteId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_STOCK', 'VENDEUR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_STOCK', 'CAISSIER')")
     public ResponseEntity<ApiResponse<List<VenteItemsResponseDTO>>> getByVente(
             @PathVariable String venteId) {
         List<VenteItemsResponseDTO> items = venteItemsService.getByVente(venteId);

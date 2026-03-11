@@ -28,7 +28,7 @@ public class VenteController {
     private final VenteService venteService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEUR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CAISSIER')")
     @Operation(summary = "Créer une vente",
                description = "Enregistre une nouvelle vente. Le stock est automatiquement déduit et un mouvement de stock (SORTIE) est créé.")
     public ResponseEntity<ApiResponse<VenteResponseDTO>> create(
@@ -47,7 +47,7 @@ public class VenteController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_STOCK', 'VENDEUR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_STOCK', 'CAISSIER')")
     @Operation(summary = "Obtenir une vente par ID", description = "Récupère les détails complets d'une vente spécifique")
     public ResponseEntity<ApiResponse<VenteResponseDTO>> getById(@PathVariable String id) {
         VenteResponseDTO response = venteService.getById(id);
@@ -56,7 +56,7 @@ public class VenteController {
 
 
     @GetMapping("/numero/{numeroVente}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_STOCK', 'VENDEUR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_STOCK', 'CAISSIER')")
     @Operation(summary = "Rechercher par numéro de vente", description = "Trouve une vente par son numéro unique (format: V-YYYYMMDD-NNNN)")
     public ResponseEntity<ApiResponse<VenteResponseDTO>> getByNumeroVente(
             @PathVariable String numeroVente) {
@@ -96,7 +96,7 @@ public class VenteController {
     }
 
     @GetMapping("/aujourdhui")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_STOCK', 'VENDEUR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_STOCK', 'CAISSIER')")
     @Operation(summary = "Ventes du jour", description = "Liste toutes les ventes effectuées aujourd'hui")
     public ResponseEntity<ApiResponse<List<VenteResponseDTO>>> getVentesAujourdhui() {
         List<VenteResponseDTO> ventes = venteService.getVentesAujourdhui();
