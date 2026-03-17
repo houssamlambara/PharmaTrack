@@ -63,4 +63,23 @@ export class ListUserComponent implements OnInit {
     if (!user.prenom && !user.nom) return 'Utilisateur Inconnu';
     return `${user.prenom || ''} ${user.nom || ''}`.trim();
   }
+
+  toggleStatus(user: UserResponseDTO) {
+    const action = user.actif ? 'désactiver' : 'réactiver';
+    // Small native confirm. If Admin confirms, proceed.
+    if (confirm(`Êtes-vous sûr de vouloir ${action} l'utilisateur ${this.getDisplayName(user)} ?`)) {
+      this.authService.toggleUserStatus(user.id!).subscribe({
+        next: () => {
+          // Update local status so UI reflects it immediately, or reload entirely
+          user.actif = !user.actif;
+          this.calculateStats();
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Erreur lors du basculement du statut:', err);
+          alert('Une erreur est survenue lors de la modification du statut.');
+        }
+      });
+    }
+  }
 }

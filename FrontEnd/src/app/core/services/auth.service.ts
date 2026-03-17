@@ -51,6 +51,10 @@ export class AuthService {
         return this.http.get<UserResponseDTO[]>(`${environment.apiUrl}/auth/users`);
     }
 
+    toggleUserStatus(userId: string): Observable<any> {
+        return this.http.put(`${environment.apiUrl}/auth/users/${userId}/toggle-status`, {});
+    }
+
     logout(): void {
         if (isPlatformBrowser(this.platformId)) {
             localStorage.removeItem(this.tokenKey);
