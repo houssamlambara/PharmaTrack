@@ -44,4 +44,11 @@ public class AuthController {
     public ResponseEntity<ApiResponse<List<UserResponseDTO>>> getAllUsers() {
         return ResponseEntity.ok(new ApiResponse<>("Liste des utilisateurs", authService.getAllUsers()));
     }
+
+    @org.springframework.web.bind.annotation.PutMapping("/users/{userId}/toggle-status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> toggleUserStatus(@org.springframework.web.bind.annotation.PathVariable String userId) {
+        authService.toggleUserStatus(userId);
+        return ResponseEntity.ok(new ApiResponse<>("Statut de l'utilisateur mis à jour avec succès", null));
+    }
 }

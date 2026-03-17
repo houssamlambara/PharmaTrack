@@ -95,4 +95,12 @@ public class AuthService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    public void toggleUserStatus(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AuthenticationException("Utilisateur non trouvé avec l'ID: " + userId));
+        
+        user.setActif(!user.isActif());
+        userRepository.save(user);
+    }
 }
