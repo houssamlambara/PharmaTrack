@@ -5,11 +5,12 @@ import { VenteService } from '../services/vente.service';
 import { VenteResponseDTO } from '../models/vente.model';
 
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-list-vente',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './list-vente.html'
 })
 export class ListVenteComponent implements OnInit {
@@ -21,6 +22,10 @@ export class ListVenteComponent implements OnInit {
   ventesAujourdhui = 0;
   chiffreAffaire = 0;
   caAujourdhui = 0;
+
+  dateDebut: string = '';
+  dateFin: string = '';
+  currentFilterText: string = 'Toutes les ventes';
 
   selectedPaiement = '';
   isLoading = false;
@@ -41,6 +46,7 @@ export class ListVenteComponent implements OnInit {
       next: (res: any) => {
         const data = res.data || res;
         this.ventes = Array.isArray(data) ? data : [];
+        this.currentFilterText = 'Toutes les ventes';
         this.applyFilter();
         this.calculateStats();
         this.isLoading = false;
@@ -76,6 +82,82 @@ export class ListVenteComponent implements OnInit {
   onFilterPaiement(event: any) {
     this.selectedPaiement = event.target.value;
     this.applyFilter();
+  }
+
+  loadVentesByPeriod() {
+    if (!this.dateDebut && !this.dateFin) {
+        this.loadVentes();
+        return;
+    }
+    
+    if (!this.dateDebut || !this.dateFin) {
+      alert('Veuillez sélectionner les deux dates (début et fin).');
+      return;
+    }
+    
+    if (new Date(this.dateDebut) > new Date(this.dateFin)) {
+      alert('La date de début doit être antérieure ou égale à la date de fin.');
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    const startDateTime = `${this.dateDebut}T00:00:00`;
+    const endDateTime = `${this.dateFin}T23:59:59`;
+
+    this.venteService.getVentesByPeriode(startDateTime, endDateTime).subscribe({
+      next: (res: any) => {
+        const data = res.data || res;
+        this.ventes = Array.isArray(data) ? data : [];
+        this.currentFilterText = `Période: ${new Date(this.dateDebut).toLocaleDateString()} - ${new Date(this.dateFin).toLocaleDateString()}`;
+        this.applyFilter();
+        this.calculateStats();
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erreur chargement ventes par période:', err);
+        this.errorMessage = 'Impossible de charger les ventes de la période.';
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  setQuickFilter(periode: string) {
+    const today = new Date();
+    
+    if (periode === 'today') {
+      const todayStr = this.formatDate(today);
+      this.dateDebut = todayStr;
+      this.dateFin = todayStr;
+      this.loadVentesByPeriod();
+    } else if (periode === 'yesterday') {
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      const yesterdayStr = this.formatDate(yesterday);
+      this.dateDebut = yesterdayStr;
+      this.dateFin = yesterdayStr;
+      this.loadVentesByPeriod();
+    } else if (periode === 'week') {
+      const lastWeek = new Date(today);
+      lastWeek.setDate(today.getDate() - 6);
+      this.dateDebut = this.formatDate(lastWeek);
+      this.dateFin = this.formatDate(today);
+      this.loadVentesByPeriod();
+    } else if (periode === 'all') {
+      this.dateDebut = '';
+      this.dateFin = '';
+      this.loadVentes();
+    }
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   deleteVente(id: string) {

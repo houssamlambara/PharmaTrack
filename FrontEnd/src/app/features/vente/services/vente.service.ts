@@ -27,6 +27,10 @@ export class VenteService {
         return this.http.get<{ data: VenteResponseDTO[] }>(`${this.apiUrl}/aujourdhui`);
     }
 
+    getVentesByPeriode(dateDebut: string, dateFin: string): Observable<{ data: VenteResponseDTO[] }> {
+        return this.http.get<{ data: VenteResponseDTO[] }>(`${this.apiUrl}/periode?dateDebut=${dateDebut}&dateFin=${dateFin}`);
+    }
+
     getByMethodePaiement(methode: string): Observable<{ data: VenteResponseDTO[] }> {
         return this.http.get<{ data: VenteResponseDTO[] }>(`${this.apiUrl}/methode-paiement/${methode}`);
     }

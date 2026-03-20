@@ -3,7 +3,6 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-up">
       <div>
         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Historique des Ventes</h2>
-        <p class="text-slate-500 text-sm mt-1">Consultez l'historique et les statistiques du chiffre d'affaires.</p>
       </div>
       <a routerLink="/ventes"
         class="flex items-center justify-center gap-2 h-10 px-5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-lg shadow-lg shadow-emerald-500/20 transition-all active:scale-95 hover:-translate-y-0.5 group">
@@ -58,13 +57,36 @@
     </div>
   </div>
 
-  <div class="mb-6 flex items-center gap-3 animate-fade-up animation-delay-200">
+  <div class="mb-6 flex flex-wrap items-center gap-3 animate-fade-up animation-delay-200">
+    <!-- Quick Filters -->
+    <div class="flex bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+      <button (click)="setQuickFilter('today')" class="px-3 py-2 text-xs font-medium border-r border-gray-200 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">Aujourd'hui</button>
+      <button (click)="setQuickFilter('yesterday')" class="px-3 py-2 text-xs font-medium border-r border-gray-200 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">Hier</button>
+      <button (click)="setQuickFilter('week')" class="px-3 py-2 text-xs font-medium border-r border-gray-200 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">7 Jours</button>
+      <button (click)="setQuickFilter('all')" class="px-3 py-2 text-xs font-medium hover:bg-emerald-50 hover:text-emerald-600 transition-colors">Tout</button>
+    </div>
+
+    <!-- Date Range Picker -->
+    <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-lg p-1 shadow-sm">
+      <input type="date" [(ngModel)]="dateDebut" class="h-8 px-2 text-sm text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
+      <span class="text-gray-400 text-sm">-</span>
+      <input type="date" [(ngModel)]="dateFin" class="h-8 px-2 text-sm text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
+      <button (click)="loadVentesByPeriod()" class="h-8 px-3 bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-700 rounded text-xs font-bold transition-colors">
+        Filtrer
+      </button>
+    </div>
+
+    <!-- Payment Filter -->
     <select (change)="onFilterPaiement($event)"
-      class="h-10 px-3 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm focus:outline-none focus:border-emerald-500 cursor-pointer shadow-sm">
+      class="h-10 px-3 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm focus:outline-none focus:border-emerald-500 cursor-pointer shadow-sm ml-auto">
       <option value="">Tous les Paiements</option>
       <option value="ESPECE">Espèces</option>
       <option value="CARTE_BANCAIRE">Carte Bancaire</option>
     </select>
+  </div>
+
+  <div class="mb-4 text-sm font-medium text-slate-500 bg-slate-50 px-3 py-2 rounded-lg border border-slate-100 inline-block animate-fade-up animation-delay-200">
+    <span class="text-emerald-600 font-bold mr-1">Affichage :</span> {{ currentFilterText }}
   </div>
 
   <div
