@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { Chart, registerables } from 'chart.js';
@@ -15,7 +16,7 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, BaseChartDirective],
+  imports: [CommonModule, RouterModule, BaseChartDirective, FormsModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -23,6 +24,10 @@ export class DashboardComponent implements OnInit {
   caAujourdhui = 0;
   ventesAujourdhui = 0;
   totalMedicaments = 0;
+  
+  dateDebut: string = '';
+  dateFin: string = '';
+  currentFilterText: string = "Aujourd'hui";
   lowStockItems: any[] = [];
   commandesEnAttente = 0;
   dernieresVentes: any[] = [];
@@ -128,31 +133,35 @@ export class DashboardComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.loadDashboardData();
+    this.initFilterToToday();
+    this.loadGeneralData();
   }
 
-  loadDashboardData() {
+  initFilterToToday() {
+    const today = new Date();
+    const todayStr = this.formatDate(today);
+    this.dateDebut = todayStr;
+    this.dateFin = todayStr;
+    this.currentFilterText = "Aujourd'hui";
+  }
+
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  loadGeneralData() {
     this.isLoading = true;
 
     forkJoin({
-      allVentes: this.venteService.getAllVentes(),
-      ventesAuj: this.venteService.getVentesAujourdhui(),
       medicaments: this.medicamentService.getAllMedicaments(),
       lowStock: this.medicamentService.getLowStock(),
       commandesEnAttente: this.commandeService.getCommandesEnAttente(),
       mouvements: this.mouvementService.getAllMouvements()
     }).subscribe({
       next: (results: any) => {
-        const ventesAujData = results.ventesAuj.data || results.ventesAuj || [];
-        const ventesAujArr = Array.isArray(ventesAujData) ? ventesAujData : [];
-        this.ventesAujourdhui = ventesAujArr.length;
-        this.caAujourdhui = ventesAujArr.reduce((acc: number, v: any) => acc + (v.montantTotal || 0), 0);
-        this.dernieresVentes = ventesAujArr.slice(0, 5);
-
-        const allVentesData = results.allVentes.data || results.allVentes || [];
-        const allVentesArr = Array.isArray(allVentesData) ? allVentesData : [];
-        this.buildWeeklyChart(allVentesArr);
-
         const medsData = results.medicaments.data || results.medicaments || [];
         this.totalMedicaments = Array.isArray(medsData) ? medsData.length : 0;
 
@@ -169,7 +178,8 @@ export class DashboardComponent implements OnInit {
           .slice(0, 6);
         this.buildMouvementChart(mouvArr);
 
-        this.isLoading = false;
+        // Run the sales loader next
+        this.loadSalesData();
 
         // Show notification with slight delay for dramatic effect if there are low stock items
         if (this.lowStockItems.length > 0) {
@@ -179,6 +189,32 @@ export class DashboardComponent implements OnInit {
           }, 800);
         }
 
+      },
+      error: () => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  loadSalesData() {
+    if (!this.dateDebut || !this.dateFin) { return; }
+    
+    this.isLoading = true;
+    const startDateTime = `${this.dateDebut}T00:00:00`;
+    const endDateTime = `${this.dateFin}T23:59:59`;
+
+    this.venteService.getVentesByPeriode(startDateTime, endDateTime).subscribe({
+      next: (res: any) => {
+        const ventesArr = Array.isArray(res.data) ? res.data : [];
+        
+        this.ventesAujourdhui = ventesArr.length;
+        this.caAujourdhui = ventesArr.reduce((acc: number, v: any) => acc + (v.montantTotal || 0), 0);
+        this.dernieresVentes = ventesArr.slice(0, 5);
+
+        this.buildDynamicChart(ventesArr, this.dateDebut, this.dateFin);
+
+        this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: () => {
@@ -188,38 +224,84 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  setQuickFilter(periode: string) {
+    const today = new Date();
+    
+    if (periode === 'today') {
+      const todayStr = this.formatDate(today);
+      this.dateDebut = todayStr;
+      this.dateFin = todayStr;
+      this.currentFilterText = "Aujourd'hui";
+    } else if (periode === 'yesterday') {
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      const yesterdayStr = this.formatDate(yesterday);
+      this.dateDebut = yesterdayStr;
+      this.dateFin = yesterdayStr;
+      this.currentFilterText = "Hier";
+    } else if (periode === 'week') {
+      const lastWeek = new Date(today);
+      lastWeek.setDate(today.getDate() - 6);
+      this.dateDebut = this.formatDate(lastWeek);
+      this.dateFin = this.formatDate(today);
+      this.currentFilterText = "7 Derniers Jours";
+    } else if (periode === 'month') {
+      const lastMonth = new Date(today);
+      lastMonth.setDate(today.getDate() - 29);
+      this.dateDebut = this.formatDate(lastMonth);
+      this.dateFin = this.formatDate(today);
+      this.currentFilterText = "30 Derniers Jours";
+    }
+
+    this.loadSalesData();
+  }
+
+  filterCustom() {
+    if (!this.dateDebut || !this.dateFin) {
+      alert('Veuillez sélectionner les deux dates.');
+      return;
+    }
+    
+    if (new Date(this.dateDebut) > new Date(this.dateFin)) {
+      alert('La date de début doit être antérieure à la date de fin.');
+      return;
+    }
+
+    const start = new Date(this.dateDebut);
+    const end = new Date(this.dateFin);
+    this.currentFilterText = `Du ${start.toLocaleDateString()} au ${end.toLocaleDateString()}`;
+    this.loadSalesData();
+  }
+
   closeNotification() {
     this.showStockNotification = false;
   }
 
-  buildWeeklyChart(ventes: any[]) {
-    const today = new Date();
-    const weekData = [0, 0, 0, 0, 0, 0, 0];
-    const dayLabels = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+  buildDynamicChart(ventes: any[], startStr: string, endStr: string) {
+    const start = new Date(startStr);
+    const end = new Date(endStr);
+    
+    // Check if single day to show something interesting, otherwise day-by-day
+    const diffTime = end.getTime() - start.getTime();
+    let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    if (diffDays > 30) diffDays = 30; // Truncate at 30 days dynamically for chart clarity
 
-    ventes.forEach(v => {
-      if (!v.dateVente) return;
-      const venteDate = new Date(v.dateVente);
-      const diffDays = Math.floor((today.getTime() - venteDate.getTime()) / (1000 * 60 * 60 * 24));
-      if (diffDays >= 0 && diffDays < 7) {
-        const dayIndex = venteDate.getDay();
-        weekData[dayIndex] += v.montantTotal || 0;
-      }
-    });
+    const labels: string[] = [];
+    const data: number[] = [];
 
-    const orderedData: number[] = [];
-    const orderedLabels: string[] = [];
-    const todayDay = today.getDay();
-    for (let i = 6; i >= 0; i--) {
-      const idx = (todayDay - i + 7) % 7;
-      orderedData.push(weekData[idx]);
-      orderedLabels.push(dayLabels[idx]);
+    for (let i = 0; i < diffDays; i++) {
+        const d = new Date(start);
+        d.setDate(d.getDate() + i);
+        labels.push(d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric' }));
+        const dayStr = this.formatDate(d);
+        const sum = ventes.filter(v => v.dateVente && v.dateVente.startsWith(dayStr)).reduce((s, v) => s + (v.montantTotal || 0), 0);
+        data.push(sum);
     }
 
     this.lineChartData = {
-      labels: orderedLabels,
+      labels: labels,
       datasets: [{
-        data: orderedData,
+        data: data,
         label: 'Ventes (DH)',
         fill: true,
         backgroundColor: 'rgba(16, 185, 129, 0.12)',

@@ -4,7 +4,6 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 animate-fade-up">
       <div>
         <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Tableau de Bord</h2>
-        <p class="text-slate-500 mt-1 font-medium">Vue d'ensemble de votre pharmacie en temps réel.</p>
       </div>
       <div class="flex gap-3">
         <a routerLink="/ventes"
@@ -22,6 +21,46 @@
 
     <div *ngIf="!isLoading">
 
+      <!-- Filters Row -->
+      <div
+        class="flex flex-wrap items-center justify-between gap-4 animate-fade-up animation-delay-50 bg-white p-4 rounded-xl border border-slate-100 shadow-sm mb-6">
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Quick Filters -->
+          <div class="flex bg-slate-50 border border-slate-200 rounded-lg overflow-hidden">
+            <button (click)="setQuickFilter('today')"
+              [ngClass]="{'bg-white text-emerald-600 font-bold shadow-sm': currentFilterText === 'Aujourd\'hui', 'text-slate-600 hover:bg-slate-100': currentFilterText !== 'Aujourd\'hui'}"
+              class="px-3 py-2 text-xs transition-colors border-r border-slate-200">Aujourd'hui</button>
+            <button (click)="setQuickFilter('yesterday')"
+              [ngClass]="{'bg-white text-emerald-600 font-bold shadow-sm': currentFilterText === 'Hier', 'text-slate-600 hover:bg-slate-100': currentFilterText !== 'Hier'}"
+              class="px-3 py-2 text-xs transition-colors border-r border-slate-200">Hier</button>
+            <button (click)="setQuickFilter('week')"
+              [ngClass]="{'bg-white text-emerald-600 font-bold shadow-sm': currentFilterText === '7 Derniers Jours', 'text-slate-600 hover:bg-slate-100': currentFilterText !== '7 Derniers Jours'}"
+              class="px-3 py-2 text-xs transition-colors border-r border-slate-200">7 Jours</button>
+            <button (click)="setQuickFilter('month')"
+              [ngClass]="{'bg-white text-emerald-600 font-bold shadow-sm': currentFilterText === '30 Derniers Jours', 'text-slate-600 hover:bg-slate-100': currentFilterText !== '30 Derniers Jours'}"
+              class="px-3 py-2 text-xs transition-colors">30 Jours</button>
+          </div>
+
+          <!-- Date Range Picker -->
+          <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg p-1">
+            <input type="date" [(ngModel)]="dateDebut"
+              class="h-8 px-2 text-sm text-slate-700 bg-transparent border-none focus:outline-none cursor-pointer">
+            <span class="text-slate-400 text-sm">-</span>
+            <input type="date" [(ngModel)]="dateFin"
+              class="h-8 px-2 text-sm text-slate-700 bg-transparent border-none focus:outline-none cursor-pointer">
+            <button (click)="filterCustom()"
+              class="h-8 px-3 bg-white border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-slate-700 rounded text-xs font-bold transition-colors shadow-sm">
+              Filtrer
+            </button>
+          </div>
+        </div>
+
+        <div class="text-sm font-medium text-slate-500 flex items-center gap-2">
+          <span class="material-symbols-outlined text-emerald-500 text-[18px]">calendar_month</span>
+          <span class="font-bold text-slate-800">{{ currentFilterText }}</span>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-up animation-delay-100 mb-6">
 
         <div
@@ -31,8 +70,9 @@
               <span class="material-symbols-outlined fill">payments</span>
             </div>
             <span
-              class="flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100">
-              <span class="material-symbols-outlined fill text-[14px] mr-1">today</span> Aujourd'hui
+              class="flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100 max-w-[150px] truncate">
+              <span class="material-symbols-outlined fill text-[14px] mr-1 shrink-0">today</span> <span
+                class="truncate">{{ currentFilterText }}</span>
             </span>
           </div>
           <div>
@@ -48,13 +88,13 @@
               <span class="material-symbols-outlined fill">receipt_long</span>
             </div>
             <span
-              class="flex items-center text-xs font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded-full border border-blue-100">
-              <span class="material-symbols-outlined fill text-[14px] mr-1">schedule</span> {{ ventesAujourdhui }}
-              ventes
+              class="flex items-center text-xs font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded-full border border-blue-100 max-w-[150px] truncate">
+              <span class="material-symbols-outlined fill text-[14px] mr-1 shrink-0">schedule</span> <span
+                class="truncate">{{ currentFilterText }}</span>
             </span>
           </div>
           <div>
-            <p class="text-slate-500 text-sm font-bold">Ventes Aujourd'hui</p>
+            <p class="text-slate-500 text-sm font-bold">Ventes</p>
             <h3 class="text-2xl font-extrabold text-slate-900 mt-1">{{ ventesAujourdhui }} Transactions</h3>
           </div>
         </div>
@@ -109,12 +149,12 @@
           class="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
           <div class="flex items-center justify-between mb-4">
             <div>
-              <h3 class="text-lg font-bold text-slate-900">Chiffre d'Affaires Hebdomadaire</h3>
-              <p class="text-sm text-slate-500">Ventes des 7 derniers jours</p>
+              <h3 class="text-lg font-bold text-slate-900">Évolution du Chiffre d'Affaires</h3>
+              <p class="text-sm text-slate-500">Aperçu dynamique de la période étudiée</p>
             </div>
             <div
               class="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
-              <span class="material-symbols-outlined text-[14px]">show_chart</span> Semaine
+              <span class="material-symbols-outlined text-[14px]">show_chart</span> {{ currentFilterText }}
             </div>
           </div>
           <div class="w-full h-56">
@@ -229,7 +269,7 @@
           <div *ngIf="dernieresVentes.length === 0"
             class="flex flex-col items-center justify-center py-10 text-slate-400">
             <span class="material-symbols-outlined text-4xl mb-2">point_of_sale</span>
-            <p class="text-sm">Aucune vente aujourd'hui</p>
+            <p class="text-sm">Aucune vente pour cette période</p>
           </div>
 
           <div class="overflow-x-auto" *ngIf="dernieresVentes.length > 0">
