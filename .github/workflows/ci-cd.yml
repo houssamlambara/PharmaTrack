@@ -14,6 +14,22 @@ jobs:
       run:
         working-directory: ./BackEnd
 
+    # PostgreSQL
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: PharmaTrack
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: root
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Récupération du code
         uses: actions/checkout@v4
@@ -30,6 +46,10 @@ jobs:
 
       - name: Build et Tests avec Maven
 
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/PharmaTrack
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: root
         run: ./mvnw clean verify
 
   # --- FRONTEND (Angular) ---
@@ -51,9 +71,7 @@ jobs:
           cache-dependency-path: FrontEnd/package-lock.json
 
       - name: Installation des dépendances
-
         run: npm ci
 
       - name: Build Angular
-
         run: npm run build -- --configuration production
