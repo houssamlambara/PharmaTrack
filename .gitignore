@@ -1,0 +1,76 @@
+# Directories
+/target/
+/node_modules/
+/dist/
+/.angular/
+/out/
+
+# IDE - IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+*.iws
+.classpath
+.project
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VS Code
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Gradle
+.gradle/
+build/
+
+# NPM
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log
+
+# Angular
+/coverage
+
+# System files
+.DS_Store
+.AppleDouble
+.LSOverride
+*.sublime-project
+
+# Backup files
+*.swp
+*.swo
+*~
+
