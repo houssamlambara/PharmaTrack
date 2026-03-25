@@ -32,7 +32,6 @@ class CategorieServiceImplTest {
 
     @Test
     void create_ShouldReturnSavedCategorie() {
-        // Arrange
         CategorieRequestDTO request = new CategorieRequestDTO();
         request.setNom("Antibiotiques");
         request.setDescription("Desc");
@@ -59,10 +58,8 @@ class CategorieServiceImplTest {
         when(categorieRepository.save(categorie)).thenReturn(savedCategorie);
         when(categorieMapper.toResponseDTO(savedCategorie)).thenReturn(response);
 
-        // Act
         CategorieResponseDTO result = categorieService.create(request);
 
-        // Assert
         assertNotNull(result);
         assertEquals("Antibiotiques", result.getNom());
         verify(categorieRepository).save(categorie);
@@ -70,20 +67,17 @@ class CategorieServiceImplTest {
 
     @Test
     void create_WhenNameExists_ShouldThrowException() {
-        // Arrange
         CategorieRequestDTO request = new CategorieRequestDTO();
         request.setNom("Existante");
 
         when(categorieRepository.existsByNom("Existante")).thenReturn(true);
 
-        // Act & Assert
         assertThrows(RuntimeException.class, () -> categorieService.create(request));
         verify(categorieRepository, never()).save(any());
     }
 
     @Test
     void getById_WhenExists_ShouldReturnCategorie() {
-        // Arrange
         String id = "1";
         Categorie categorie = Categorie.builder().id(id).nom("Test").build();
         CategorieResponseDTO response = CategorieResponseDTO.builder().id(id).nom("Test").build();
@@ -91,36 +85,29 @@ class CategorieServiceImplTest {
         when(categorieRepository.findById(id)).thenReturn(Optional.of(categorie));
         when(categorieMapper.toResponseDTO(categorie)).thenReturn(response);
 
-        // Act
         CategorieResponseDTO result = categorieService.getById(id);
 
-        // Assert
         assertNotNull(result);
         assertEquals(id, result.getId());
     }
 
     @Test
     void getById_WhenNotExists_ShouldThrowResourceNotFoundException() {
-        // Arrange
         String id = "999";
         when(categorieRepository.findById(id)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> categorieService.getById(id));
     }
 
     @Test
     void delete_WhenExists_ShouldDelete() {
-        // Arrange
         String id = "1";
         Categorie categorie = Categorie.builder().id(id).build();
 
         when(categorieRepository.findById(id)).thenReturn(Optional.of(categorie));
 
-        // Act
         categorieService.delete(id);
 
-        // Assert
         verify(categorieRepository).delete(categorie);
     }
 }
