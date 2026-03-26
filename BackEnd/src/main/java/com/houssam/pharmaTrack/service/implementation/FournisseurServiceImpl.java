@@ -30,7 +30,6 @@ public class FournisseurServiceImpl implements FournisseurService {
             throw new RuntimeException("Un fournisseur avec cet email existe déjà");
         }
 
-        // Vérifier si le téléphone existe déjà
         if (fournisseurRepository.existsByTelephone(requestDTO.getTelephone())) {
             throw new RuntimeException("Un fournisseur avec ce téléphone existe déjà");
         }
@@ -61,13 +60,11 @@ public class FournisseurServiceImpl implements FournisseurService {
         Fournisseur fournisseur = fournisseurRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fournisseur non trouvé avec l'id: " + id));
 
-        // Vérifier si le nouvel email existe déjà (sauf si c'est le même)
         if (!fournisseur.getEmail().equals(requestDTO.getEmail()) &&
             fournisseurRepository.existsByEmail(requestDTO.getEmail())) {
             throw new RuntimeException("Un fournisseur avec cet email existe déjà");
         }
 
-        // Vérifier si le nouveau téléphone existe déjà (sauf si c'est le même)
         if (!fournisseur.getTelephone().equals(requestDTO.getTelephone()) &&
             fournisseurRepository.existsByTelephone(requestDTO.getTelephone())) {
             throw new RuntimeException("Un fournisseur avec ce téléphone existe déjà");
@@ -84,7 +81,6 @@ public class FournisseurServiceImpl implements FournisseurService {
         Fournisseur fournisseur = fournisseurRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fournisseur non trouvé avec l'id: " + id));
 
-        // Vérifier s'il y a des commandes pour ce fournisseur
         if (fournisseur.getCommandes() != null && !fournisseur.getCommandes().isEmpty()) {
             throw new RuntimeException("Impossible de supprimer ce fournisseur car il a des commandes associées");
         }

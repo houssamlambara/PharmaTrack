@@ -21,5 +21,5 @@ public class CommandeItemsResponseDTO {
 
     private Integer quantite;
     private BigDecimal prixUnitaire;
-    private BigDecimal montantTotal; // quantite * prixUnitaire
+    private BigDecimal montantTotal;
 }

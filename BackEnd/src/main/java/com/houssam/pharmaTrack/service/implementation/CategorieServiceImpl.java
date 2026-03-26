@@ -56,7 +56,6 @@ public class CategorieServiceImpl implements CategorieService {
         Categorie categorie = categorieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Catégorie non trouvée avec l'id: " + id));
 
-        // Vérifier si le nouveau nom existe déjà (sauf si c'est le même)
         if (!categorie.getNom().equals(requestDTO.getNom()) &&
             categorieRepository.existsByNom(requestDTO.getNom())) {
             throw new RuntimeException("Une catégorie avec ce nom existe déjà");
@@ -73,7 +72,6 @@ public class CategorieServiceImpl implements CategorieService {
         Categorie categorie = categorieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Catégorie non trouvée avec l'id: " + id));
 
-        // Vérifier s'il y a des médicaments dans cette catégorie
         if (categorie.getMedicaments() != null && !categorie.getMedicaments().isEmpty()) {
             throw new RuntimeException("Impossible de supprimer cette catégorie car elle contient des médicaments");
         }

@@ -30,12 +30,10 @@ public class MedicamentServiceImpl implements MedicamentService {
     public MedicamentResponseDTO create(MedicamentRequestDTO requestDTO) {
         log.info("Création d'un nouveau médicament: {}", requestDTO.getNom());
 
-        // Vérifier si le médicament existe déjà
         if (medicamentRepository.existsByNom(requestDTO.getNom())) {
             throw new RuntimeException("Un médicament avec ce nom existe déjà");
         }
 
-        // Vérifier si la catégorie existe
         Categorie categorie = categorieRepository.findById(requestDTO.getCategorieId())
                 .orElseThrow(() -> new ResourceNotFoundException("Catégorie non trouvée avec l'id: " + requestDTO.getCategorieId()));
 
@@ -72,13 +70,11 @@ public class MedicamentServiceImpl implements MedicamentService {
         Medicament medicament = medicamentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Médicament non trouvé avec l'id: " + id));
 
-        // Vérifier si le nouveau nom existe déjà (sauf si c'est le même)
         if (!medicament.getNom().equals(requestDTO.getNom()) &&
             medicamentRepository.existsByNom(requestDTO.getNom())) {
             throw new RuntimeException("Un médicament avec ce nom existe déjà");
         }
 
-        // Vérifier si la catégorie existe si elle a changé
         if (!medicament.getCategorie().getId().equals(requestDTO.getCategorieId())) {
             Categorie categorie = categorieRepository.findById(requestDTO.getCategorieId())
                     .orElseThrow(() -> new ResourceNotFoundException("Catégorie non trouvée avec l'id: " + requestDTO.getCategorieId()));
@@ -99,17 +95,14 @@ public class MedicamentServiceImpl implements MedicamentService {
         Medicament medicament = medicamentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Médicament non trouvé avec l'id: " + id));
 
-        // Vérifier s'il y a des mouvements de stock
         if (medicament.getMouvements() != null && !medicament.getMouvements().isEmpty()) {
             throw new RuntimeException("Impossible de supprimer ce médicament car il a des mouvements de stock");
         }
 
-        // Vérifier s'il y a des ventes
         if (medicament.getLigneventes() != null && !medicament.getLigneventes().isEmpty()) {
             throw new RuntimeException("Impossible de supprimer ce médicament car il a été vendu");
         }
 
-        // Vérifier s'il y a des commandes
         if (medicament.getLigneCommnde() != null && !medicament.getLigneCommnde().isEmpty()) {
             throw new RuntimeException("Impossible de supprimer ce médicament car il est dans des commandes");
         }
@@ -131,7 +124,6 @@ public class MedicamentServiceImpl implements MedicamentService {
     public List<MedicamentResponseDTO> getByCategorie(String categorieId) {
         log.info("Récupération des médicaments de la catégorie: {}", categorieId);
 
-        // Vérifier si la catégorie existe
         categorieRepository.findById(categorieId)
                 .orElseThrow(() -> new ResourceNotFoundException("Catégorie non trouvée avec l'id: " + categorieId));
 

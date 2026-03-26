@@ -43,21 +43,18 @@ public class VenteServiceImpl implements VenteService {
     public VenteResponseDTO create(VenteRequestDTO requestDTO) {
         log.info("Création d'une nouvelle vente");
 
-        // Récupérer l'utilisateur connecté (caissier)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé"));
 
-        // Créer la vente
         Vente vente = new Vente();
         vente.setNumeroVente(generateNumeroVente());
         vente.setDateHeure(LocalDateTime.now());
         vente.setPaiementMode(requestDTO.getMethodePaiement());
         vente.setUser(user);
-        vente.setRemise(0.0); // Pas de remise pour l'instant
+        vente.setRemise(0.0);
 
-        // Créer les items de la vente
         List<VenteItems> items = new ArrayList<>();
         double montantTotal = 0.0;
 
@@ -65,14 +62,12 @@ public class VenteServiceImpl implements VenteService {
             Medicament medicament = medicamentRepository.findById(itemDTO.getMedicamentId())
                     .orElseThrow(() -> new ResourceNotFoundException("Médicament non trouvé avec l'id: " + itemDTO.getMedicamentId()));
 
-            // Vérifier le stock
             if (medicament.getQuantiteStock() < itemDTO.getQuantite()) {
                 throw new RuntimeException("Stock insuffisant pour " + medicament.getNom() +
                         ". Stock disponible: " + medicament.getQuantiteStock() +
                         ", demandé: " + itemDTO.getQuantite());
             }
 
-            // Créer l'item de vente
             VenteItems item = VenteItems.builder()
                     .medicament(medicament)
                     .quantite(itemDTO.getQuantite())
@@ -84,11 +79,9 @@ public class VenteServiceImpl implements VenteService {
             items.add(item);
             montantTotal += item.getSousTotal();
 
-            // Mettre à jour le stock du médicament
             medicament.setQuantiteStock(medicament.getQuantiteStock() - itemDTO.getQuantite());
             medicamentRepository.save(medicament);
 
-            // Créer un mouvement de stock (SORTIE) via le service
             mouvementStockService.enregistrerSortie(
                     medicament,
                     itemDTO.getQuantite(),
@@ -181,8 +174,6 @@ public class VenteServiceImpl implements VenteService {
         Vente vente = venteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Vente non trouvée avec l'id: " + id));
 
-        // Note: Dans un vrai système, on ne supprime généralement pas les ventes
-        // On pourrait plutôt avoir un statut "ANNULEE" et remettre le stock
         log.warn("Suppression d'une vente : {}. Attention, le stock ne sera pas restauré automatiquement.",
                 vente.getNumeroVente());
 
@@ -190,10 +181,7 @@ public class VenteServiceImpl implements VenteService {
         log.info("Vente {} supprimée", id);
     }
 
-    /**
-     * Génère un numéro de vente unique
-     * Format: V-YYYYMMDD-NNNN
-     */
+
     private String generateNumeroVente() {
         LocalDateTime now = LocalDateTime.now();
         String datePrefix = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));

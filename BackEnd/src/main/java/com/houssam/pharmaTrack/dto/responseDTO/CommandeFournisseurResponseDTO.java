@@ -36,6 +36,6 @@ public class CommandeFournisseurResponseDTO {
     private List<CommandeItemsResponseDTO> items;
 
     // Calculs
-    private BigDecimal montantTotal; // Somme des montants des items
-    private Integer nombreArticles; // Nombre d'items dans la commande
+    private BigDecimal montantTotal;
+    private Integer nombreArticles;
 }

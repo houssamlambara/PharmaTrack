@@ -24,7 +24,7 @@ public class MedicamentResponseDTO {
     private Integer quantiteStock;
     private Integer seuilAlerte;
     private LocalDate dateExpiration;
-    // private String imageUrl;
+
     private boolean actif;
     private LocalDateTime dateCreation;
 
