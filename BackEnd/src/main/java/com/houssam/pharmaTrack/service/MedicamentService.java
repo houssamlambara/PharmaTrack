@@ -28,4 +28,8 @@ public interface MedicamentService {
     MedicamentResponseDTO getByCodeBarres(String codeBarres);
 
     MedicamentResponseDTO toggleActif(String id);
+
+    List<MedicamentResponseDTO> getExpiringMedicaments(int days);
+
+    List<MedicamentResponseDTO> getExpiredMedicaments();
 }

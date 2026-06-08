@@ -52,6 +52,14 @@ export class MedicamentService {
         return this.http.get<{ data: MedicamentResponseDTO }>(`${this.apiUrl}/code-barres/${codeBarres}`);
     }
 
+    getExpiringMedicaments(days: number = 30): Observable<{ data: MedicamentResponseDTO[] }> {
+        return this.http.get<{ data: MedicamentResponseDTO[] }>(`${this.apiUrl}/expiring?days=${days}`);
+    }
+
+    getExpiredMedicaments(): Observable<{ data: MedicamentResponseDTO[] }> {
+        return this.http.get<{ data: MedicamentResponseDTO[] }>(`${this.apiUrl}/expired`);
+    }
+
     toggleActif(id: string): Observable<{ data: MedicamentResponseDTO }> {
         return this.http.patch<{ data: MedicamentResponseDTO }>(`${this.apiUrl}/${id}/toggle-actif`, {});
     }

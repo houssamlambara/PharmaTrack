@@ -118,5 +118,21 @@ public class MedicamentController {
         MedicamentResponseDTO response = medicamentService.toggleActif(id);
         return ResponseEntity.ok(new ApiResponse<>("Statut du médicament modifié", response));
     }
-}
 
+    @GetMapping("/expiring")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_STOCK')")
+    @Operation(summary = "Médicaments qui vont expirer", description = "Liste les médicaments qui expirent dans les jours spécifiés")
+    public ResponseEntity<ApiResponse<List<MedicamentResponseDTO>>> getExpiringMedicaments(
+            @RequestParam(defaultValue = "30") int days) {
+        List<MedicamentResponseDTO> medicaments = medicamentService.getExpiringMedicaments(days);
+        return ResponseEntity.ok(new ApiResponse<>("Médicaments qui expirent bientôt", medicaments));
+    }
+
+    @GetMapping("/expired")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_STOCK')")
+    @Operation(summary = "Médicaments expirés", description = "Liste les médicaments dont la date d'expiration est dépassée")
+    public ResponseEntity<ApiResponse<List<MedicamentResponseDTO>>> getExpiredMedicaments() {
+        List<MedicamentResponseDTO> medicaments = medicamentService.getExpiredMedicaments();
+        return ResponseEntity.ok(new ApiResponse<>("Médicaments expirés", medicaments));
+    }
+}

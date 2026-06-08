@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -157,17 +159,31 @@ public class MedicamentServiceImpl implements MedicamentService {
     }
 
     @Override
+    @Transactional
     public MedicamentResponseDTO toggleActif(String id) {
-        log.info("Basculement du statut actif du médicament: {}", id);
-
         Medicament medicament = medicamentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Médicament non trouvé avec l'id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Médicament non trouvé avec l'ID: " + id));
 
         medicament.setActif(!medicament.isActif());
         Medicament updatedMedicament = medicamentRepository.save(medicament);
-
-        log.info("Statut actif du médicament {} changé à: {}", id, updatedMedicament.isActif());
         return medicamentMapper.toResponseDTO(updatedMedicament);
     }
-}
 
+    @Override
+    public List<MedicamentResponseDTO> getExpiringMedicaments(int days) {
+        LocalDate now = LocalDate.now();
+        LocalDate futureDate = now.plusDays(days);
+        return medicamentRepository.findByDateExpirationBetweenAndActifTrue(now, futureDate)
+                .stream()
+                .map(medicamentMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MedicamentResponseDTO> getExpiredMedicaments() {
+        return medicamentRepository.findByDateExpirationBeforeAndActifTrue(LocalDate.now())
+                .stream()
+                .map(medicamentMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+}

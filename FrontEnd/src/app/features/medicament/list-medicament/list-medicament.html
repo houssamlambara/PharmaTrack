@@ -121,6 +121,7 @@
             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Dosage & Forme
             </th>
             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Stock</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Péremption</th>
             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Prix U.</th>
             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Statut</th>
             <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
@@ -163,6 +164,15 @@
                 class="px-2.5 py-1 inline-flex text-xs font-bold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <span class="material-symbols-outlined text-[14px] mr-1">check_circle</span> Normal ({{
                 med.quantiteStock }})
+              </span>
+            </td>
+
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span *ngIf="med.expire" class="px-2.5 py-1 inline-flex text-xs font-bold rounded-md bg-red-50 text-red-600 border border-red-200" title="Produit périmé !">
+                <span class="material-symbols-outlined text-[14px] mr-1">event_busy</span> {{ med.dateExpiration | date:'dd/MM/yyyy' }}
+              </span>
+              <span *ngIf="!med.expire" class="text-sm font-medium text-slate-700">
+                <span class="material-symbols-outlined text-[14px] mr-1 text-slate-400 align-text-bottom">calendar_month</span>{{ med.dateExpiration | date:'dd/MM/yyyy' }}
               </span>
             </td>
 

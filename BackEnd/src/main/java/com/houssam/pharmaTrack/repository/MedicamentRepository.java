@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,4 +40,10 @@ public interface MedicamentRepository extends JpaRepository<Medicament, String> 
 
     // Médicaments par catégorie et actifs
     List<Medicament> findByCategorie_IdAndActifTrue(String categorieId);
+
+    // Médicaments dont la date d'expiration est dépassée (périmés)
+    List<Medicament> findByDateExpirationBeforeAndActifTrue(LocalDate date);
+
+    // Médicaments dont la date d'expiration approche (entre aujourd'hui et X jours)
+    List<Medicament> findByDateExpirationBetweenAndActifTrue(LocalDate startDate, LocalDate endDate);
 }

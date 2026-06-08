@@ -24,17 +24,19 @@ export class DashboardComponent implements OnInit {
   caAujourdhui = 0;
   ventesAujourdhui = 0;
   totalMedicaments = 0;
-  
+
   dateDebut: string = '';
   dateFin: string = '';
   currentFilterText: string = "Aujourd'hui";
   lowStockItems: any[] = [];
+  expiringItems: any[] = [];
   commandesEnAttente = 0;
   dernieresVentes: any[] = [];
   derniersMouvements: any[] = [];
 
   isLoading = true;
   showStockNotification = false;
+  showPeremptionNotification = false;
 
   private venteService = inject(VenteService);
   private medicamentService = inject(MedicamentService);
@@ -158,6 +160,7 @@ export class DashboardComponent implements OnInit {
     forkJoin({
       medicaments: this.medicamentService.getAllMedicaments(),
       lowStock: this.medicamentService.getLowStock(),
+      expiring: this.medicamentService.getExpiringMedicaments(30),
       commandesEnAttente: this.commandeService.getCommandesEnAttente(),
       mouvements: this.mouvementService.getAllMouvements()
     }).subscribe({
@@ -167,6 +170,9 @@ export class DashboardComponent implements OnInit {
 
         const lowStockData = results.lowStock.data || results.lowStock || [];
         this.lowStockItems = Array.isArray(lowStockData) ? lowStockData.slice(0, 5) : [];
+
+        const expiringData = results.expiring?.data || results.expiring || [];
+        this.expiringItems = Array.isArray(expiringData) ? expiringData.slice(0, 5) : [];
 
         const cmdData = results.commandesEnAttente.data || results.commandesEnAttente || [];
         this.commandesEnAttente = Array.isArray(cmdData) ? cmdData.length : 0;
@@ -189,6 +195,13 @@ export class DashboardComponent implements OnInit {
           }, 800);
         }
 
+        if (this.expiringItems.length > 0) {
+          setTimeout(() => {
+            this.showPeremptionNotification = true;
+            this.cdr.detectChanges();
+          }, 1200);
+        }
+
       },
       error: () => {
         this.isLoading = false;
@@ -199,7 +212,7 @@ export class DashboardComponent implements OnInit {
 
   loadSalesData() {
     if (!this.dateDebut || !this.dateFin) { return; }
-    
+
     this.isLoading = true;
     const startDateTime = `${this.dateDebut}T00:00:00`;
     const endDateTime = `${this.dateFin}T23:59:59`;
@@ -207,7 +220,7 @@ export class DashboardComponent implements OnInit {
     this.venteService.getVentesByPeriode(startDateTime, endDateTime).subscribe({
       next: (res: any) => {
         const ventesArr = Array.isArray(res.data) ? res.data : [];
-        
+
         this.ventesAujourdhui = ventesArr.length;
         this.caAujourdhui = ventesArr.reduce((acc: number, v: any) => acc + (v.montantTotal || 0), 0);
         this.dernieresVentes = ventesArr.slice(0, 5);
@@ -226,7 +239,7 @@ export class DashboardComponent implements OnInit {
 
   setQuickFilter(periode: string) {
     const today = new Date();
-    
+
     if (periode === 'today') {
       const todayStr = this.formatDate(today);
       this.dateDebut = todayStr;
@@ -261,7 +274,7 @@ export class DashboardComponent implements OnInit {
       alert('Veuillez sélectionner les deux dates.');
       return;
     }
-    
+
     if (new Date(this.dateDebut) > new Date(this.dateFin)) {
       alert('La date de début doit être antérieure à la date de fin.');
       return;
@@ -277,10 +290,21 @@ export class DashboardComponent implements OnInit {
     this.showStockNotification = false;
   }
 
+  closePeremptionNotification() {
+    this.showPeremptionNotification = false;
+  }
+
+  getDaysRemaining(expirationDate: string): number {
+    const today = new Date();
+    const expDate = new Date(expirationDate);
+    const diffTime = expDate.getTime() - today.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
   buildDynamicChart(ventes: any[], startStr: string, endStr: string) {
     const start = new Date(startStr);
     const end = new Date(endStr);
-    
+
     // Check if single day to show something interesting, otherwise day-by-day
     const diffTime = end.getTime() - start.getTime();
     let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;

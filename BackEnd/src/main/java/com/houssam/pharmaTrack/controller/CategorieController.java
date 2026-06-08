@@ -77,4 +77,3 @@ public class CategorieController {
         return ResponseEntity.ok(new ApiResponse<>("Résultats de recherche", categories));
     }
 }
-
